@@ -216,12 +216,12 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS \`DiscussionComment\` (
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`discussionId\` INT NULL,
-      \`replyTo\` INT NULL,
+      \`replyToId\` INT NULL,
       \`content\` TEXT NULL,
       \`authorId\` INT NULL,
       PRIMARY KEY (\`id\`),
       INDEX \`fk_DiscussionComment_1_idx\` (\`authorId\` ASC),
-      INDEX \`fk_DiscussionComment_2_idx\` (\`replyTo\` ASC),
+      INDEX \`fk_DiscussionComment_2_idx\` (\`replyToId\` ASC),
       INDEX \`fk_DiscussionComment_3_idx\` (\`discussionId\` ASC),
       CONSTRAINT \`fk_DiscussionComment_1\`
         FOREIGN KEY (\`authorId\`)
@@ -229,7 +229,7 @@ module.exports = {
         ON DELETE NO ACTION
         ON UPDATE NO ACTION,
       CONSTRAINT \`fk_DiscussionComment_2\`
-        FOREIGN KEY (\`replyTo\`)
+        FOREIGN KEY (\`replyToId\`)
         REFERENCES \`DiscussionComment\` (\`id\`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION,
