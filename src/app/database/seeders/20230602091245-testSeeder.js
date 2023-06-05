@@ -18,63 +18,93 @@ module.exports = {
       inGameName: 's1mple',
       elo: 100,
       teamId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'electronic',
       elo: 1,
       teamId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'b1t',
       elo: 100,
       teamId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'Perfecto',
       elo: 1,
       teamId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'NPL',
       elo: 100,
       teamId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       inGameName: 'ZywOo',
       elo: 101,
       teamId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'Magisk',
       elo: 100,
       teamId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'ApeX',
       elo: 100,
       teamId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'dupreeh',
       elo: 100,
       teamId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'Spinx',
       elo: 100,
-      teamId: 2
+      teamId: 2,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'SDY',
       elo: 100,
       teamId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'BOROS',
       elo: 200,
       teamId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
-      teamId: 'Woro2k',
+      inGameName: 'Woro2k',
       elo: 100,
       teamId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'Krasnal',
       elo: 100,
       teamId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }, {
       inGameName: 'Demqq',
       elo: 100,
-      teamId: 3
+      teamId: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }]);
 
     await queryInterface.bulkInsert('Event', [{
@@ -114,7 +144,6 @@ module.exports = {
     const roundsNuke = [false, true, true, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true];
 
     for (let [i, won] of Object.entries(roundsNuke)) {
-      console.log("Roind: " + i, " " + won);
       await queryInterface.bulkInsert('Round', [{
         number: parseInt(i) + 1,
         winnerId: won ? 3 : 1,
@@ -208,6 +237,7 @@ module.exports = {
         passwordHash: 'sgfsdogoisjigsog',
         role: 1,
         createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
         playerId: 1
       },
       {
@@ -215,12 +245,14 @@ module.exports = {
         passwordHash: 'sgfsdogoisjigsog',
         role: 1,
         createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
       },
       {
         username: 'User3',
         passwordHash: 'sgfsdogoisjigsog',
         role: 1,
         createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
       }
     ])
 
@@ -240,27 +272,32 @@ module.exports = {
       authorId: 2,
       title: 'Title of Discussion',
       content: 'Hello world',
+      createdAt: '2000-01-01',
+      updatedAt: '2000-01-01',
     }])
 
-    await queryInterface.bulkInsert('DiscussionComment', [{
+    await queryInterface.bulkInsert('Discussion', [{
       authorId: 2,
-      discussionId: 1,
-      replyTo: null,
-      content: 'text'
+      replyToId: null,
+      content: 'text',
+      createdAt: '2000-01-01',
+      updatedAt: '2000-01-01',
     }])
 
-    await queryInterface.bulkInsert('DiscussionComment', [{
+    await queryInterface.bulkInsert('Discussion', [{
       authorId: 2,
-      discussionId: 1,
-      replyTo: 1,
-      content: 'text'
+      replyToId: 1,
+      content: 'text',
+      createdAt: '2000-01-01',
+      updatedAt: '2000-01-01',
     }])
 
-    await queryInterface.bulkInsert('DiscussionComment', [{
+    await queryInterface.bulkInsert('Discussion', [{
       authorId: 2,
-      discussionId: 1,
-      replyTo: 2,
-      content: 'text'
+      replyToId: 2,
+      content: 'text',
+      createdAt: '2000-01-01',
+      updatedAt: '2000-01-01',
     }])
   },
 

@@ -1,7 +1,5 @@
 'use strict';
 
-const { log } = require('console');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
@@ -12,6 +10,8 @@ module.exports = {
         \`inGameName\` VARCHAR(45) NULL,
         \`elo\` INT NULL,
         \`teamId\` INT NULL,
+        \`createdAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        \`updatedAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`id\`))
       ENGINE = InnoDB;
     `)
@@ -20,7 +20,8 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS \`User\` (
       \`id\` INT NOT NULL AUTO_INCREMENT, 
       \`role\` INT NULL, 
-      \`createdAt\` DATETIME NULL,
+      \`createdAt\` DATETIME NOT NULL,
+      \`updatedAt\` DATETIME NOT NULL,
       \`playerId\` INT(11) NULL,
       \`username\` VARCHAR(45) NULL,
       \`passwordHash\` VARCHAR(256) NULL,
@@ -202,40 +203,19 @@ module.exports = {
       \`authorId\` INT NULL,
       \`title\` VARCHAR(45) NULL,
       \`content\` TEXT NULL,
+      \`replyToId\` INT NULL,
+      \`createdAt\` DATETIME NOT NULL,
+      \`updatedAt\` DATETIME NOT NULL,
       PRIMARY KEY (\`id\`),
       INDEX \`fk_Discussion_1_idx\` (\`authorId\` ASC),
+      CONSTRAINT \`fk_Discussion_2\`
+        FOREIGN KEY (\`replyToId\`)
+        REFERENCES \`Discussion\` (\`id\`)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION,
       CONSTRAINT \`fk_Discussion_1\`
         FOREIGN KEY (\`authorId\`)
         REFERENCES \`User\` (\`id\`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION)
-    ENGINE = InnoDB;
-    `)
-
-    await queryInterface.sequelize.query(`
-    CREATE TABLE IF NOT EXISTS \`DiscussionComment\` (
-      \`id\` INT NOT NULL AUTO_INCREMENT,
-      \`discussionId\` INT NULL,
-      \`replyToId\` INT NULL,
-      \`content\` TEXT NULL,
-      \`authorId\` INT NULL,
-      PRIMARY KEY (\`id\`),
-      INDEX \`fk_DiscussionComment_1_idx\` (\`authorId\` ASC),
-      INDEX \`fk_DiscussionComment_2_idx\` (\`replyToId\` ASC),
-      INDEX \`fk_DiscussionComment_3_idx\` (\`discussionId\` ASC),
-      CONSTRAINT \`fk_DiscussionComment_1\`
-        FOREIGN KEY (\`authorId\`)
-        REFERENCES \`User\` (\`id\`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-      CONSTRAINT \`fk_DiscussionComment_2\`
-        FOREIGN KEY (\`replyToId\`)
-        REFERENCES \`DiscussionComment\` (\`id\`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-      CONSTRAINT \`fk_DiscussionComment_3\`
-        FOREIGN KEY (\`discussionId\`)
-        REFERENCES \`Discussion\` (\`id\`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION)
     ENGINE = InnoDB;
