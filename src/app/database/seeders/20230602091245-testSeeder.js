@@ -7,10 +7,16 @@ module.exports = {
     await queryInterface.bulkInsert('Team', [
       {
         name: 'Natus Vincere',
+        createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
       }, {
-        name: 'Vitality'
+        name: 'Vitality',
+        createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
       }, {
-        name: 'Monte Esports'
+        name: 'Monte Esports',
+        createdAt: '2000-01-01',
+        updatedAt: '2000-01-01',
       }
     ])
 
@@ -108,7 +114,10 @@ module.exports = {
     }]);
 
     await queryInterface.bulkInsert('Event', [{
-      name: 'BlastTV Paris Major'
+      name: 'BlastTV Paris Major',
+      startsAt: '2000-01-01',
+      createdAt: '2000-01-01',
+      updatedAt: '2000-01-01'
     }])
 
     await queryInterface.bulkInsert('Match', [{
@@ -260,11 +269,15 @@ module.exports = {
       {
         title: 'Monte - Paris Major Champoins',
         content: "lol gotcha",
-        authorId: 1
+        authorId: 1,
+        createdAt: '2000-01-01',
+        updatedAt: '2001-01-01',
       }, {
         title: 'Apeks - Best Zonic ever',
         content: "true",
-        authorId: 1
+        authorId: 1,
+        createdAt: '2000-02-01',
+        updatedAt: '2001-02-01',
       }
     ])
 

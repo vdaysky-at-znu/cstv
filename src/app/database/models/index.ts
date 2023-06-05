@@ -7,19 +7,18 @@ import {
     Optional,
     InferAttributes,
     InferCreationAttributes,
-    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin
+    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin, NonAttribute
 } from 'sequelize';
 
 import mysql2 from 'mysql2';
 
-let sequelize = new Sequelize('cstv', 'vova', '1', {
+let sequelize = new Sequelize('cstv', 'root', 'root', {
     host: 'localhost',
     dialect: 'mysql',
     dialectModule: mysql2
 });
 
-
-enum UserRole {
+export enum UserRole {
     User = 1,
     Player = 10,
     Admin = 20,
@@ -46,6 +45,7 @@ Team.init(
     }, {
         freezeTableName: true,
         sequelize,
+        timestamps: true,
     }
 )
 
@@ -144,8 +144,11 @@ export class Match extends Model<InferAttributes<Match>, InferCreationAttributes
     declare startsAt: Date
     declare startedAt: Date
 
-    declare getTeamA: HasOneGetAssociationMixin<Team>;
-    declare getTeamB: HasOneGetAssociationMixin<Team>;
+    declare teamA?: NonAttribute<Team>
+    declare teamB?: NonAttribute<Team>
+
+    declare getTeamOne: BelongsToGetAssociationMixin<Team>;
+    declare getTeamTwo: BelongsToGetAssociationMixin<Team>;
     declare getGames: HasManyGetAssociationsMixin<Game>;
 }
 
@@ -161,6 +164,7 @@ Match.init(
 
     }, {
         sequelize,
+        timestamps: false,
         freezeTableName: true,
     }
 )
@@ -168,10 +172,11 @@ Match.init(
 Event.hasMany(Match);
 Match.belongsTo(Event);
 
-Team.hasMany(Match);
+Team.hasMany(Match, {as: 'matchesAsOne', foreignKey: 'teamAId'});
+Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
 
-Match.belongsTo(Team, {as: 'teamA'})
-Match.belongsTo(Team, {as: 'teamB'})
+Team.hasMany(Match, {as: 'TeamTwos', foreignKey: 'teamBId'});
+Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 
 export class Game extends Model<InferAttributes<Game>, InferCreationAttributes<Game>> {
     declare id: CreationOptional<number>
@@ -237,6 +242,7 @@ PlayerStats.belongsTo(Player);
 
 export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>>{
     declare id: CreationOptional<number>
+    declare title: string
     declare content: string
     declare createdAt: Date
     declare updatedAt: Date
@@ -251,6 +257,7 @@ Post.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        title: DataTypes.STRING,
         content: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,

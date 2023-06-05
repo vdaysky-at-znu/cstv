@@ -41,6 +41,8 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS \`Team\` (
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`name\` VARCHAR(45) NULL,
+      \`createdAt\` DATETIME NOT NULL,
+      \`updatedAt\` DATETIME NOT NULL,
       PRIMARY KEY (\`id\`))
     ENGINE = InnoDB;
     `)
@@ -50,6 +52,8 @@ module.exports = {
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`name\` VARCHAR(45) NULL,
       \`startsAt\` DATETIME NULL,
+      \`createdAt\` DATETIME NOT NULL,
+      \`updatedAt\` DATETIME NOT NULL,
       PRIMARY KEY (\`id\`))
     ENGINE = InnoDB;
     `)
@@ -187,6 +191,7 @@ module.exports = {
       \`title\` VARCHAR(255) NULL,
       \`authorId\` INT NULL,
       \`createdAt\` DATETIME NULL,
+      \`updatedAt\` DATETIME NULL,
       PRIMARY KEY (\`Id\`),
       INDEX \`fk_Post_1_idx\` (\`authorId\` ASC),
       CONSTRAINT \`fk_Post_1\`

@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "vova",
-    "password": "1",
+    "username": "root",
+    "password": "root",
     "database": "cstv",
     "host": "127.0.0.1",
     "dialect": "mysql",
