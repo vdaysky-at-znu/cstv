@@ -2,6 +2,8 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 
 import AuthForm from "../app/components/auth/AuthForm";
+import LoginForm from "../app/components/auth/LoginForm";
+import DiscussionForm from "../app/components/discussion/DiscussionForm"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,13 +17,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-
- 
-
   return (
     <html lang="en">
       <body className={inter.className}>
         <AuthForm />
+        <LoginForm />
+        <DiscussionForm></DiscussionForm>
         {children}
       </body>
     </html>

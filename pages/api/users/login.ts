@@ -8,15 +8,11 @@ import passport from "../../../src/app/services/passport";
 
 export const router = createRouter<NextApiRequest, NextApiResponse>();
 router
-
 .use(actions[0])
 .use(actions[1])
 .use(sessionMW)
 .use(passportAuth)
 .post(async (req, res) => {
-    const data: RegisterBody = req.body;
-    console.log("user in request", req.user)
-    // const user = await registerUser(data);
     const user = JSON.parse(JSON.stringify(req.user));
     res.json({user});
 });

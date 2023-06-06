@@ -3,21 +3,37 @@ import { Game } from "@/app/database/models";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export const getServerSideProps: GetServerSideProps<{
-    games: Game[];
+    games: Game[] | null;
+    isError: boolean;
 }> = async () => {
-    const games = await getGames();
-    return { props: { games: JSON.parse(JSON.stringify(games)) } };
+
+    let games = null;
+    let isError = true;
+    
+    try {
+        const gameModels = await getGames();
+        games = JSON.parse(JSON.stringify(gameModels));
+        isError = false;
+    } catch (e) {
+        console.error("Error fetching games:", e);
+    }
+
+    return { props: { games, isError } };
+    
 };
    
 export default function Page({
-    games,
+    games, isError
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    if (isError) {
+        return <div>Error fetching games</div>
+    }
+
     return <div>
         <table>
             <tbody>
-                { games.map((game, i) => <tr key={i}><td>{game.id}</td></tr>) }
+                { games?.map((game, i) => <tr key={i}><td>{game.id}</td></tr>) }
             </tbody>
-            
         </table>
     </div> 
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { log } from 'console';
 import { useState } from 'react'
 import React from "react";
 
@@ -13,7 +12,7 @@ export default function AuthForm() {
 
     async function sendRegisterRequest(username: string, password: string) {
         try {
-            const response = await fetch("/api/users/register", {
+            const response = await fetch("/api/users/login", {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
@@ -49,7 +48,7 @@ export default function AuthForm() {
                 <div>
                     <input onChange={e => setUsername(e.target.value)} value={username} placeholder="Username"></input>
                     <input onChange={e => setPassword(e.target.value)} value={password} placeholder="Password" type="password"></input>
-                    <button type="button" onClick={() => sendRegisterRequest(username, password)}>Register</button>
+                    <button type="button" onClick={() => sendRegisterRequest(username, password)}>Login</button>
                 </div>
                 
             </div> 

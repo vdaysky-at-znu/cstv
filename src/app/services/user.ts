@@ -27,3 +27,14 @@ export async function registerUser({username, password}: RegisterBody): Promise<
         role: UserRole.User
     })
 }
+
+export async function getUser(id: number) {
+    return await User.findByPk(id);
+}
+
+export async function findUserWithEmailAndPassword(username: string, password: string): Promise<User | null> {
+    return await User.findOne({where:{
+        username, 
+        passwordHash: password
+    }})
+}
