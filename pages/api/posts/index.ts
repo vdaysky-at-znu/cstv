@@ -9,7 +9,7 @@ router.put(async (req, res) => {
 });
 
 export default router.handler({
-    onError: (err, req, res) => {
+    onError: (err: any, req, res) => {
       console.error(err);
       res.status(err.statusCode || 500).end(err.message);
     },

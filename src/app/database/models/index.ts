@@ -12,8 +12,8 @@ import {
 
 import mysql2 from 'mysql2';
 
-let sequelize = new Sequelize('cstv', 'root', 'root', {
-    host: 'localhost',
+let sequelize = new Sequelize(process.env.DB_NAME || "", process.env.DB_USER || "", process.env.DB_PASSWORD || "", {
+    host: process.env.DB_HOST || 'localhost',
     dialect: 'mysql',
     dialectModule: mysql2
 });
@@ -144,6 +144,9 @@ export class Match extends Model<InferAttributes<Match>, InferCreationAttributes
     declare startsAt: Date
     declare startedAt: Date
 
+    declare teamAId: number
+    declare teamBId: number
+
     declare teamA?: NonAttribute<Team>
     declare teamB?: NonAttribute<Team>
 
@@ -159,6 +162,8 @@ Match.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        teamAId: DataTypes.INTEGER,
+        teamBId: DataTypes.INTEGER,
         startsAt: DataTypes.TIME,
         startedAt: DataTypes.TIME,
 
@@ -181,9 +186,15 @@ Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 export class Game extends Model<InferAttributes<Game>, InferCreationAttributes<Game>> {
     declare id: CreationOptional<number>
 
+    declare teamAId: number
+    declare teamBId: number
+    declare matchId: number
+    declare winnerId?: number
+
     declare getTeamA: HasOneGetAssociationMixin<Team>;
     declare getTeamB: HasOneGetAssociationMixin<Team>;
     declare getMatch: HasOneGetAssociationMixin<Match>;
+    declare getWinner: HasOneGetAssociationMixin<Team>;
 }
 
 Game.init(
@@ -193,6 +204,10 @@ Game.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        teamAId: DataTypes.INTEGER,
+        teamBId: DataTypes.INTEGER,
+        matchId: DataTypes.INTEGER,
+        winnerId: DataTypes.INTEGER,
     }, {
         freezeTableName: true,
         timestamps: false,
@@ -205,6 +220,12 @@ Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
 
 Game.belongsTo(Match, {foreignKey: 'matchId'});
 Match.hasMany(Game, {foreignKey: 'matchId'});
+
+Team.hasMany(Game, {as: 'gamesAsOne', foreignKey: 'teamAId'});
+Game.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
+
+Team.hasMany(Game, {as: 'gamesAsTwo', foreignKey: 'teamBId'});
+Game.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 
 export class PlayerStats extends Model<InferAttributes<PlayerStats>, InferCreationAttributes<PlayerStats>> {
 
@@ -244,8 +265,9 @@ export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<P
     declare id: CreationOptional<number>
     declare title: string
     declare content: string
-    declare createdAt: Date
-    declare updatedAt: Date
+    declare createdAt: CreationOptional<Date>
+    declare updatedAt: CreationOptional<Date>
+    declare authorId: number
 
     declare getAuthor: HasOneGetAssociationMixin<User>;
 }
@@ -261,6 +283,7 @@ Post.init(
         content: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
+        authorId: DataTypes.INTEGER,
     }, {
         timestamps: true,
         freezeTableName: true,
@@ -275,8 +298,11 @@ export class Discussion extends Model<InferAttributes<Discussion>, InferCreation
     declare id: CreationOptional<number>
     declare title: string
     declare content: string
-    declare createdAt: Date
-    declare updatedAt: Date
+    declare createdAt: CreationOptional<Date>
+    declare updatedAt: CreationOptional<Date>
+
+    declare replyToId?: number
+    declare authorId: number
 
     declare getAuthor: HasOneGetAssociationMixin<User>;
     declare getReplyTo: HasOneGetAssociationMixin<Discussion>;
@@ -294,7 +320,8 @@ Discussion.init(
         content: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
-
+        replyToId: DataTypes.INTEGER,
+        authorId: DataTypes.INTEGER,
     }, {
         freezeTableName: true,
         sequelize,
