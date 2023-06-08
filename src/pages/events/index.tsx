@@ -1,6 +1,7 @@
 import { getEvents } from "@/services/event";
 import { Event } from "@/database/models";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import EventCard from "@/components/event";
 
 export const getServerSideProps: GetServerSideProps<{
     events: Event[];
@@ -13,12 +14,9 @@ export const getServerSideProps: GetServerSideProps<{
   export default function Page({
     events,
   }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    return <div>
-        <table>
-            <tbody>
-                { events.map((event, i) => <tr key={i}><td>{event.name}</td><td>{event.startsAt}</td></tr>) }
-            </tbody>
-            
-        </table>
+    return <div className="mt-10 mx-2">
+        { events.map((event, i) => <div className="mt-2">
+          <EventCard key={i} event={event} />
+        </div> ) }
     </div> 
   }

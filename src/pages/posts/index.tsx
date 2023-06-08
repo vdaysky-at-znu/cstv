@@ -19,7 +19,7 @@ const router = createRouter<IncomingMessage, ServerResponse>()
    
 export default function Page({
   posts,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: any) {
 
     const authState = useSelector(selectAuthState);
 
@@ -27,7 +27,6 @@ export default function Page({
             {JSON.stringify(authState)}
             { posts.map((post, i) => <PostCard key={i} post={post}></PostCard>) }
         </div>
-
 }
 
 export const getServerSideProps: GetServerSideProps<{

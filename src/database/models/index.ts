@@ -146,13 +146,32 @@ export class Match extends Model<InferAttributes<Match>, InferCreationAttributes
 
     declare teamAId: number
     declare teamBId: number
+    declare eventId: number
+    declare winnerId: number
 
     declare teamA?: NonAttribute<Team>
     declare teamB?: NonAttribute<Team>
+    declare event?: NonAttribute<Event>
 
-    declare getTeamOne: BelongsToGetAssociationMixin<Team>;
-    declare getTeamTwo: BelongsToGetAssociationMixin<Team>;
+    declare getTeamA: BelongsToGetAssociationMixin<Team>;
+    declare getTeamB: BelongsToGetAssociationMixin<Team>;
+    declare getWinner: HasOneGetAssociationMixin<Team>;
     declare getGames: HasManyGetAssociationsMixin<Game>;
+
+    async getMapCount() {
+        return (await this.getGames()).length;
+    }
+
+    async getScore() {
+        let winCount = [0, 0];
+        for (let game of await this.getGames()) {
+            const gameWinner = await game.getWinner();
+            const teamA = await this.getTeamA();
+            winCount[0] += (gameWinner.id == teamA.id ? 1 : 0);
+            winCount[1] += (gameWinner.id == teamA.id ? 0 : 1);
+        }
+        return winCount;
+    }
 }
 
 Match.init(
@@ -164,8 +183,10 @@ Match.init(
         },
         teamAId: DataTypes.INTEGER,
         teamBId: DataTypes.INTEGER,
+        eventId: DataTypes.INTEGER,
         startsAt: DataTypes.TIME,
         startedAt: DataTypes.TIME,
+        winnerId: DataTypes.INTEGER,
 
     }, {
         sequelize,
@@ -174,8 +195,8 @@ Match.init(
     }
 )
 
-Event.hasMany(Match);
-Match.belongsTo(Event);
+Event.hasMany(Match, {foreignKey: 'eventId'});
+Match.belongsTo(Event, {as: 'event', foreignKey: 'eventId'});
 
 Team.hasMany(Match, {as: 'matchesAsOne', foreignKey: 'teamAId'});
 Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
@@ -183,16 +204,19 @@ Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
 Team.hasMany(Match, {as: 'TeamTwos', foreignKey: 'teamBId'});
 Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 
+Team.hasMany(Match, {foreignKey: 'winnerId'});
+Match.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'})
+
 export class Game extends Model<InferAttributes<Game>, InferCreationAttributes<Game>> {
     declare id: CreationOptional<number>
 
-    declare teamAId: number
-    declare teamBId: number
+    // declare teamAId: number
+    // declare teamBId: number
     declare matchId: number
     declare winnerId?: number
 
-    declare getTeamA: HasOneGetAssociationMixin<Team>;
-    declare getTeamB: HasOneGetAssociationMixin<Team>;
+    // declare getTeamA: HasOneGetAssociationMixin<Team>;
+    // declare getTeamB: HasOneGetAssociationMixin<Team>;
     declare getMatch: HasOneGetAssociationMixin<Match>;
     declare getWinner: HasOneGetAssociationMixin<Team>;
 }
@@ -204,8 +228,8 @@ Game.init(
             autoIncrement: true,
             primaryKey: true,
         },
-        teamAId: DataTypes.INTEGER,
-        teamBId: DataTypes.INTEGER,
+        // teamAId: DataTypes.INTEGER,
+        // teamBId: DataTypes.INTEGER,
         matchId: DataTypes.INTEGER,
         winnerId: DataTypes.INTEGER,
     }, {
@@ -221,11 +245,11 @@ Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
 Game.belongsTo(Match, {foreignKey: 'matchId'});
 Match.hasMany(Game, {foreignKey: 'matchId'});
 
-Team.hasMany(Game, {as: 'gamesAsOne', foreignKey: 'teamAId'});
-Game.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
+// Team.hasMany(Game, {as: 'gamesAsOne', foreignKey: 'teamAId'});
+// Game.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
 
-Team.hasMany(Game, {as: 'gamesAsTwo', foreignKey: 'teamBId'});
-Game.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
+// Team.hasMany(Game, {as: 'gamesAsTwo', foreignKey: 'teamBId'});
+// Game.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 
 export class PlayerStats extends Model<InferAttributes<PlayerStats>, InferCreationAttributes<PlayerStats>> {
 
@@ -238,6 +262,33 @@ export class PlayerStats extends Model<InferAttributes<PlayerStats>, InferCreati
     declare getPlayer: HasOneGetAssociationMixin<Player>;
 
 }
+
+export class Round extends Model<InferAttributes<Round>, InferCreationAttributes<Round>> {
+    declare id: CreationOptional<number>
+    declare number: number
+    declare winnerId: number
+    declare gameId: number
+
+    declare getWinner: BelongsToGetAssociationMixin<Team>
+}
+Round.init({
+    id: {
+        type: DataTypes.NUMBER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    number: DataTypes.NUMBER,
+    winnerId: DataTypes.NUMBER,
+    gameId: DataTypes.NUMBER
+}, {
+    timestamps: false,
+    sequelize,
+    freezeTableName: true,
+})
+
+Round.belongsTo(Game, {foreignKey: 'gameId'})
+Game.hasMany(Round, {foreignKey: 'gameId'})
+
 
 PlayerStats.init(
     {

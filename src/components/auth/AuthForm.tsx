@@ -1,15 +1,21 @@
 "use client";
 
-import { log } from 'console';
+import { setUser } from '@/store/actions';
+import { selectAuthState } from '@/store/authSlice';
 import { useState } from 'react'
 import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import Input from "@/components/form/input";
+import Button from "@/components/form/button";
+import Link from 'next/link';
 
 export default function AuthForm() {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [user, setUser] = useState(null);
     const [loginError, setLoginError] = useState(null);
+    const user = useSelector(selectAuthState);
+    const dispatch = useDispatch();
 
     async function sendRegisterRequest(username: string, password: string) {
         try {
@@ -27,37 +33,44 @@ export default function AuthForm() {
             }
             const {user} = await response.json();
             console.log("set user", user);
-            setUser(user);
+            dispatch(setUser(user));
         } catch (e) {
             setLoginError(e.message);
         }
     }
 
     return <div>
-        
+    <div className='text-center'>
         <div>
-            { 
-            user == null ? 
-            <div>
-                <div> 
-                    {
-                        loginError ? <p> {loginError} </p> 
-                        : 
-                        null
-                        }
-                </div>
+            <div className='mx-5'>
                 <div>
-                    <input onChange={e => setUsername(e.target.value)} value={username} placeholder="Username"></input>
-                    <input onChange={e => setPassword(e.target.value)} value={password} placeholder="Password" type="password"></input>
-                    <button type="button" onClick={() => sendRegisterRequest(username, password)}>Register</button>
+                    <div className='mb-2'>
+                        <Input 
+                            onChange={e => setUsername(e.target.value)} 
+                            value={username} 
+                            placeholder="Username"
+                        />
+                    </div>
+                    
+                    <div className='mb-10'>
+                        <Input 
+                            onChange={e => setPassword(e.target.value)} 
+                            value={password} 
+                            placeholder="Password" 
+                            type="password" 
+                        />
+                    </div>
+                </div>
+
+                <div className='my-2 text-center'>
+                    <Link href='/users/login' className='text-blue-800 underline'>Already have an account?</Link>
                 </div>
                 
-            </div> 
-            : 
-            <div>
-                Logged in as {user.username}
+                <Button type="button" block onClick={() => sendRegisterRequest(username, password)}>Register</Button>
+                
+                <p className="text-red-600 mt-5"> {loginError} </p> 
             </div>
-            }
-        </div>
+        </div> 
     </div>
+</div>
 }

@@ -10,6 +10,7 @@ router
     console.log("user in request", req.user)
     const userModel = await registerUser(data);
     const user = JSON.parse(JSON.stringify(userModel));
+    req.login(user, console.error);
     res.json({user});
 });
 

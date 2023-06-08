@@ -7,8 +7,9 @@ import {AuthenticatedApiRequest, requireAuth} from "@/services/passport";
 export const router = createRouter<AuthenticatedApiRequest, NextApiResponse>();
 router
     .use(requireAuth())
-    .get(async (req, res) => {
-        res.json({user: req.user?.toJSON?.()});
+    .post(async (req, res) => {
+        req.logOut();
+        res.json({});
     });
 
 export default router.handler({
