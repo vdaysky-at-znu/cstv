@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function MatchCard({match, score}: {match: Match, score: number[]}) {
     const teamAWon = match?.winnerId == match?.teamA?.id
 
-    return <div className="text-xs bg-gray-100 py-4 px-5 rounded-lg">
+    return <div className="text-xs bg-gray-100 py-6 border-b-4 border-green-600 px-5 rounded-lg">
             <div className="flex justify-between">
                 <p>
                     <Link href={"/teams/" + match.teamAId} className="font-semibold">{match.teamA?.name}</Link> 

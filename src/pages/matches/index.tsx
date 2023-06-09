@@ -3,10 +3,11 @@ import { Match } from "@/database/models";
 import { log } from "console";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import MatchCard from "@/components/match";
+import MatchesTable from "@/components/match/matchesTable";
 
 export const getServerSideProps: GetServerSideProps<{
     matches: Match[]
-    scores: number[][]
+    scores: [number, number][]
 }> = async () => {
     const matches = await getMatches();
     const scores = await Promise.all(matches.map(match => match.getScore()));
@@ -18,8 +19,6 @@ export default function Page({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
         
     return <div className="mt-10 mx-2">
-        <div>
-            { matches.map((match, i) => <div className="mt-2"><MatchCard match={match} score={scores[i]} key={i} /></div>) }
-        </div>
+        <MatchesTable matches={matches} scores={scores} />
     </div> 
 }

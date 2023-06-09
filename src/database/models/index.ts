@@ -7,10 +7,11 @@ import {
     Optional,
     InferAttributes,
     InferCreationAttributes,
-    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin, NonAttribute
+    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin, NonAttribute, VirtualDataType
 } from 'sequelize';
 
 import mysql2 from 'mysql2';
+import DiscussionCard from '@/components/discussion';
 
 let sequelize = new Sequelize(process.env.DB_NAME || "", process.env.DB_USER || "", process.env.DB_PASSWORD || "", {
     host: process.env.DB_HOST || 'localhost',
@@ -30,6 +31,8 @@ export class Team extends Model<InferAttributes<Team>, InferCreationAttributes<T
     declare name: string
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
+    declare getPlayers: HasManyGetAssociationsMixin<Player>
+    declare players: NonAttribute<Player[]>
 }
 
 Team.init(
@@ -55,6 +58,7 @@ export class Player extends Model<InferAttributes<Player>, InferCreationAttribut
     declare elo: number
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
+    declare team?: NonAttribute<Team>
 }
 
 Player.init(
@@ -76,8 +80,8 @@ Player.init(
     }
 )
 
-Player.belongsTo(Team);
-Team.hasMany(Player);
+Player.belongsTo(Team, {as: "team", foreignKey: "teamId"});
+Team.hasMany(Player, {as: "players", foreignKey: "teamId"});
 
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
@@ -119,9 +123,27 @@ Player.hasOne(User);
 export class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>> {
     declare id: CreationOptional<number>
     declare name: string
-    declare startsAt: Date
+    declare startsAt: Date 
+
+    declare getTeamOnes: HasManyGetAssociationsMixin<Team>;
+    declare getTeamTwos: HasManyGetAssociationsMixin<Team>;
 
     declare getMatches: HasManyGetAssociationsMixin<Match>;
+    declare teams?: Team[]
+
+    async loadTeams(): Promise<Team[]> {
+        
+        let intersect: {[key: number]: Team} = {};
+        for (let match of await this.getMatches()) {
+
+            const teamA = await match.getTeamA()
+            const teamB = await match.getTeamB();
+
+            intersect[teamA.id] = teamA;
+            intersect[teamB.id] = teamB;
+        }
+        return Object.values(intersect);
+    }
 }
 
 Event.init(
@@ -133,6 +155,15 @@ Event.init(
         },
         name: DataTypes.STRING,
         startsAt: DataTypes.TIME,
+        teams: {
+            type: DataTypes.VIRTUAL,
+            async get() {
+                return await this.loadTeams();
+            },
+            set() {
+                throw new Error('Do not try to set the `teams` value!');
+            }
+        }
     }, {
         freezeTableName: true,
         sequelize
@@ -162,8 +193,8 @@ export class Match extends Model<InferAttributes<Match>, InferCreationAttributes
         return (await this.getGames()).length;
     }
 
-    async getScore() {
-        let winCount = [0, 0];
+    async getScore(): Promise<[number, number]> {
+        let winCount: [number, number] = [0, 0];
         for (let game of await this.getGames()) {
             const gameWinner = await game.getWinner();
             const teamA = await this.getTeamA();
@@ -187,7 +218,6 @@ Match.init(
         startsAt: DataTypes.TIME,
         startedAt: DataTypes.TIME,
         winnerId: DataTypes.INTEGER,
-
     }, {
         sequelize,
         timestamps: false,
@@ -195,13 +225,13 @@ Match.init(
     }
 )
 
-Event.hasMany(Match, {foreignKey: 'eventId'});
+Event.hasMany(Match, {as: 'matches', foreignKey: 'eventId'});
 Match.belongsTo(Event, {as: 'event', foreignKey: 'eventId'});
 
-Team.hasMany(Match, {as: 'matchesAsOne', foreignKey: 'teamAId'});
+Team.hasMany(Match, {as: 'matchesAsTeamOne', foreignKey: 'teamAId'});
 Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
 
-Team.hasMany(Match, {as: 'TeamTwos', foreignKey: 'teamBId'});
+Team.hasMany(Match, {as: 'matchesAsTeamTwo', foreignKey: 'teamBId'});
 Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
 
 Team.hasMany(Match, {foreignKey: 'winnerId'});
@@ -319,8 +349,9 @@ export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<P
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
     declare authorId: number
+    declare author?: NonAttribute<User>
 
-    declare getAuthor: HasOneGetAssociationMixin<User>;
+    declare getAuthor: BelongsToGetAssociationMixin<User>;
 }
 
 Post.init(
@@ -342,8 +373,8 @@ Post.init(
     }
 )
 
-Post.belongsTo(User, {foreignKey: 'authorId'});
-User.hasMany(Post, {foreignKey: 'authorId'});
+Post.belongsTo(User, {as: 'author', foreignKey: 'authorId'});
+User.hasMany(Post, {as: 'posts', foreignKey: 'authorId'});
 
 export class Discussion extends Model<InferAttributes<Discussion>, InferCreationAttributes<Discussion>>{
     declare id: CreationOptional<number>
@@ -354,6 +385,7 @@ export class Discussion extends Model<InferAttributes<Discussion>, InferCreation
 
     declare replyToId?: number
     declare authorId: number
+    declare author?: NonAttribute<User>
 
     declare getAuthor: HasOneGetAssociationMixin<User>;
     declare getReplyTo: HasOneGetAssociationMixin<Discussion>;
@@ -381,5 +413,7 @@ Discussion.init(
 
 Discussion.belongsTo(Discussion, {as: 'replyTo', foreignKey: 'replyToId'});
 Discussion.hasMany(Discussion, {as: 'replies', foreignKey: 'replyToId'});
+Discussion.belongsTo(User, {as: 'author', foreignKey: 'authorId'})
+User.hasMany(Discussion, {as: 'discussions', foreignKey: 'authorId'})
 
 export default sequelize; 

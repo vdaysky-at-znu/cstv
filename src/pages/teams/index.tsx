@@ -1,6 +1,7 @@
 import { getTeams } from "@/services/team";
 import { Team } from "@/database/models";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import TeamsTable from "./teamsTable";
 
 export const getServerSideProps: GetServerSideProps<{
     teams: Team[];
@@ -12,12 +13,7 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Page({
     teams,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    return <div>
-        <table>
-            <tbody>
-                { teams.map((team, i) => <tr key={i}><td>{team.id}</td><td>{team.name}</td></tr>) }
-            </tbody>
-            
-        </table>
+    return <div className="px-2 mt-10">
+        <TeamsTable teams={teams} />
     </div> 
 }

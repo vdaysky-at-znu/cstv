@@ -42,7 +42,7 @@ export default function AuthForm() {
     return <div>
     <div className='text-center'>
         <div>
-            <div className='mx-5'>
+            <div className='mx-5 rounded-lg bg-gray-100 pt-10 pb-1 px-3'>
                 <div>
                     <div className='mb-2'>
                         <Input 

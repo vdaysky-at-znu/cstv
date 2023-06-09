@@ -1,10 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect"
 import { RegisterBody, registerUser } from "@/services/user"
-import {AuthenticatedApiRequest, logIn, requireAuth} from "@/services/passport";
+import {AuthenticatedApiRequest, logIn, mySession, requireAuth} from "@/services/passport";
 
 export const router = createRouter<AuthenticatedApiRequest, NextApiResponse>();
 router
+.use(mySession)
+.use(logIn)
+.use(requireAuth)
 .post(async (req, res) => {
     const data: RegisterBody = req.body;
     console.log("user in request", req.user)

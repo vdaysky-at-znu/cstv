@@ -15,4 +15,15 @@ export async function createDiscussion(author: User, data: CreateDiscussionBody)
     });
 }
 
+export async function getDiscussions(opts: {[key: string]: any}) {
+    return await Discussion.findAll({
+        order: [["createdAt", "DESC"]],
+        ...opts
+    })
+}
+
+export async function getRootDiscussions(opts: {[key: string]: any}) {
+    return await getDiscussions({where: {replyToId: null}, ...opts});
+}
+
 

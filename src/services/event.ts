@@ -15,3 +15,8 @@ export async function createEvent(data: EventBody) {
         startsAt: data.startsAt
     });
 }
+
+export async function getEventById(id: number, opts: {[key: string]: any}) {
+    const event = await Event.findByPk(id, {...opts});
+    return event;
+}

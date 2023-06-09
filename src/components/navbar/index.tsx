@@ -21,17 +21,19 @@ export default function Navbar() {
     }
 
     function AuthButton () {
-        return <div>
+        return <div className="w-full">
             { user ? 
-                <Button className="bg-green-500 text-white" href="#" dense onClick={logout}>Log Out</Button> : 
-                <Button className="bg-green-500 text-white" href="/users/register" dense >Sign in</Button>
+                <Button className="bg-green-500 text-white" variant="tile" href="#" dense block onClick={logout}>Log Out</Button> : 
+                <Button className="bg-green-500 text-white" variant="tile" href="/users/register" block dense >Sign in</Button>
             }
         </div> 
     }
 
-    return <div className="bg-white flex justify-between">
+    return <div className="bg-white flex justify-between shadow-lg">
         <div>
-            <img className="h-[48px]" src="/logo.webp"></img>
+            <Link href="/">
+                <img className="h-[48px] min-w-[48px]" src="/logo.webp"></img>
+            </Link>
         </div>
         <div className="flex">
             <div className={router.route == "/matches" ? "border-b-2 border-green-500" : ""}>
@@ -52,7 +54,6 @@ export default function Navbar() {
             </div>
             
         </div>
-        {/* <div className="border-l-2 border-gray-400"></div> */}
         <AuthButton />
     </div>
 }

@@ -43,7 +43,7 @@ export default function AuthForm() {
     return <div>
         <div className='text-center'>
             <div>
-                <div className='mx-5'>
+                <div className='mx-5 rounded-lg bg-gray-100 pt-10 pb-1 px-3'>
                     <div>
                         <div className='mb-2'>
                             <Input 
@@ -69,7 +69,7 @@ export default function AuthForm() {
                     
                     <Button type="button" block onClick={() => sendRegisterRequest(username, password)}>Login</Button>
                     
-                    <p> {loginError} </p> 
+                    <p className="text-red-600 mt-5"> {loginError} </p>  
                 </div>
             </div> 
         </div>
