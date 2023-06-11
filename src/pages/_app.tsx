@@ -7,6 +7,10 @@ import axios from "axios";
 import {setUser} from "@/store/actions";
 import Layout from "@/components/layout"
 
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 function App({ Component, pageProps }: AppProps) {
 
     const dispatch = useDispatch();

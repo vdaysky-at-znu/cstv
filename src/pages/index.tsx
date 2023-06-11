@@ -7,7 +7,7 @@ import DiscussionCard from "@/components/discussion";
 import { getMatches } from "@/services/match";
 import TeamsTable from "./teams/teamsTable";
 import { getTeams } from "@/services/team";
-import Button from "@/components/form/button";
+import Button from "@/components/form/elements/button";
 
 export default function Home({posts, discussions, teams}: InferGetServerSidePropsType<typeof getServerSideProps>) {
     

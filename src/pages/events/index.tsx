@@ -2,6 +2,7 @@ import { getEvents } from "@/services/event";
 import { Event } from "@/database/models";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import EventCard from "@/components/event";
+import AddMatch from "@/components/admin/AddMatch";
 
 export const getServerSideProps: GetServerSideProps<{
     events: Event[];
@@ -15,6 +16,8 @@ export const getServerSideProps: GetServerSideProps<{
     events,
   }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return <div className="mt-10 mx-2">
+      <div>
+      </div>
         { events.map((event, i) => <div className="mt-2">
           <EventCard key={i} event={event} />
         </div> ) }

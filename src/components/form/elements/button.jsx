@@ -8,10 +8,13 @@ export default function Button(props) {
     const dense = "dense" in props;
 
     const denseSize = variant == "tile" ? " py-3 ": " py-2 ";
+    const normalSize = variant == "tile" ? " py-3 ": " py-2 ";
+    const bgColor = variant == "flat" ? " ": " bg-green-600 ";
+    const textColor = variant == "flat" ? " text-black ": " text-white ";
 
     if (props.href) {
         return <div className={
-            (dense ? "px-4 " + denseSize : "px-8 py-3 ") + 
+            (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
             (variant == "tile" ? "border-x border-gray-200 ": " rounded-lg ") +
             (variant == "outline" ? " border-green-600 border-2 text-green-600 " : " ") + 
             (block ? "block w-full text-center " : "") +
@@ -28,13 +31,13 @@ export default function Button(props) {
             {...props} 
             className={ 
                 className + 
-                (variant == "outline" ? " border-green-600 border-2 text-green-600 " : " bg-green-600 ") + 
-                (variant == "flat" ? "" : " ") + 
-                (dense ? "px-2 py-2 " : "px-8 py-3 ") + 
+                (variant == "outline" ? " border-green-600 border-2 text-green-600 " : bgColor) +
+                (variant == "flat" ? "" : " ") +
+                (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
                 (block ? "block w-full " : "") +
                 (variant == "tile" ? "bg-gray-100 ": "rounded-lg ") +
-                " text-white "
+                textColor
             }>
             { props.children }
     </button>
-}
+}``

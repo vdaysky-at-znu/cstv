@@ -5,9 +5,10 @@ import { selectAuthState } from '@/store/authSlice';
 import { useState } from 'react'
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import Input from "@/components/form/input";
-import Button from "@/components/form/button";
+import Input from "@/components/form/elements/input";
+import Button from "@/components/form/elements/button";
 import Link from 'next/link';
+import {useRouter} from "next/router";
 
 export default function AuthForm() {
 
@@ -17,7 +18,11 @@ export default function AuthForm() {
     const user = useSelector(selectAuthState);
     const dispatch = useDispatch();
 
+    const router = useRouter();
+
     async function sendRegisterRequest(username: string, password: string) {
+
+
         try {
             const response = await fetch("/api/users/register", {
                 method: "POST",
@@ -34,6 +39,7 @@ export default function AuthForm() {
             const {user} = await response.json();
             console.log("set user", user);
             dispatch(setUser(user));
+            await router.push("/")
         } catch (e) {
             setLoginError(e.message);
         }

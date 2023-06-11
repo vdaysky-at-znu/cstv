@@ -1,7 +1,18 @@
 import { Event } from "../database/models"
+import {Op} from "sequelize";
 
-export async function getEvents() {
-    return await Event.findAll();
+export async function getEvents({name}: {name?: string} = {}) {
+    let opts: {[key: string]: any} = {}
+
+    if (name != null) {
+        opts.where = {
+            name: {
+                [Op.like]: `%${name}%`
+            }
+        }
+    }
+
+    return await Event.findAll(opts);
 }
 
 export type EventBody = {

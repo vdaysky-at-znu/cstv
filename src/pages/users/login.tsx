@@ -8,7 +8,7 @@ import LoginForm from "@/components/auth/LoginForm"
 export default function loginPage() {
     const user = useSelector(selectAuthState);
    
-    return <div className="flex items-center w-full flex-shrink-0 items-center content-center">
+    return <div className="flex items-center w-full flex-shrink-0 content-center">
         <div className="w-full items-center mt-[20vh]">
             <LoginForm></LoginForm>
         </div>

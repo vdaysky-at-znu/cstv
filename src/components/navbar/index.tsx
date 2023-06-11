@@ -5,8 +5,11 @@ import { selectAuthState } from "@/store/authSlice";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import Button from "@/components/form/button"
+import Button from "@/components/form/elements/button"
 import { useRouter } from "next/router";
+import React from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faRightFromBracket, faSignIn, faSignOut} from "@fortawesome/free-solid-svg-icons"
 
 export default function Navbar() {
 
@@ -22,9 +25,13 @@ export default function Navbar() {
 
     function AuthButton () {
         return <div className="w-full">
-            { user ? 
-                <Button className="bg-green-500 text-white" variant="tile" href="#" dense block onClick={logout}>Log Out</Button> : 
-                <Button className="bg-green-500 text-white" variant="tile" href="/users/register" block dense >Sign in</Button>
+            { user ?
+                <Button className="bg-green-500 text-white bg-red-600" variant="tile" href="/users/register" block dense >
+                    <FontAwesomeIcon icon={faSignOut} />
+                </Button> :
+                <Button className="bg-green-500 text-white" variant="tile" href="#" dense block onClick={logout}>
+                    <FontAwesomeIcon icon={faSignIn} />
+                </Button>
             }
         </div> 
     }

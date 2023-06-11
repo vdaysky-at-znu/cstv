@@ -1,4 +1,4 @@
-import { Match } from "../database/models"
+import { Match } from "@/database/models"
 
 export async function getMatches(opts: {[key: string]: any}) {
     return await Match.findAll({...opts, include: ['teamA', 'teamB', 'event']});

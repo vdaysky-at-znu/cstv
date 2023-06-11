@@ -2,13 +2,15 @@ import { promisify } from 'util';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { findUserWithEmailAndPassword, getUser } from './user'
-import {User, UserRole} from "../database/models";
+import {User, UserRole} from "@/database/models";
 import {createRouter} from "next-connect";
 import {NextApiRequest, NextApiResponse} from "next";
 import RedisStore from "connect-redis";
 import Redis from "ioredis";
 import nextSession from "next-session";
 import {promisifyStore} from "next-session/lib/compat";
+import {promisifyMiddleware} from "@/services/utils";
+import {IncomingMessage} from "http";
 
 passport.serializeUser((user: Express.User, done: (err: any, id?: any) => void) => {
     const myUser = user as User;
@@ -58,25 +60,25 @@ export const getSession = nextSession({
     autoCommit: true,
 });
 
-export async function mySession(req: NextApiRequest, res: NextApiResponse, next: any) {
+export async function mySession(req: IncomingMessage, res: NextApiResponse, next: any) {
   await getSession(req, res);
-  await next();
+  return await next();
 }
 
 /** Middleware that will authenticate user based on stored cookie.
  * User will be available in `request.user` */
-export const requireAuth = () => createRouter<NextApiRequest, NextApiResponse>()
-    .use(
-        mySession
-    )
-    .use(passport.initialize() as any)
-    .use(passport.session())
+export const requireAuth = () => createRouter<IncomingMessage, NextApiResponse>()
+    .use(mySession)
+    .use(promisifyMiddleware(passport.initialize()))
+    .use(promisifyMiddleware(passport.session()))
     .clone();
 
 export const requireRole = (role: UserRole) => createRouter<AuthenticatedApiRequest, NextApiResponse>()
-    .use(requireAuth)
+    .use(mySession)
+    .use(promisifyMiddleware(passport.initialize()))
+    .use(promisifyMiddleware(passport.session()))
     .use(async (req, res, next) => {
-        if (req.user.role === role) {
+        if (req?.user?.role === role) {
             await next();
         } else {
             res.status(403).end();
