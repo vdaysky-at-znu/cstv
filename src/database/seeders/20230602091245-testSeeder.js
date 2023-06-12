@@ -7,14 +7,17 @@ module.exports = {
     await queryInterface.bulkInsert('Team', [
       {
         name: 'Natus Vincere',
+        rating: 123,
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
       }, {
         name: 'Vitality',
+        rating: 223,
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
       }, {
         name: 'Monte Esports',
+        rating: 311,
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
       }
@@ -133,11 +136,13 @@ module.exports = {
       {
           matchId: 1,
           winnerId: 3,
+          map: "Anubis",
       },
       {
         matchId: 1,
         winnerId: 3,
-    }
+        map: "Nuke",
+      }
     ])
 
     const roundsAnubis = [true, true, false, false, false, false, true, true, true, false, true, true, true, true, true, false, false, false, true, false, false, true, true, true, true, false, false, true];

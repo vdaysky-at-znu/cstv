@@ -41,6 +41,7 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS \`Team\` (
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`name\` VARCHAR(45) NULL,
+      \`rating\` INT NOT NULL,
       \`createdAt\` DATETIME NOT NULL,
       \`updatedAt\` DATETIME NOT NULL,
       PRIMARY KEY (\`id\`))
@@ -101,27 +102,7 @@ module.exports = {
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`matchId\` INT NULL,
       \`winnerId\` INT NULL,
-      PRIMARY KEY (\`id\`),
-      INDEX \`fk_Game_1_idx\` (\`matchId\` ASC),
-      INDEX \`fk_Game_2_idx\` (\`winnerId\` ASC),
-      CONSTRAINT \`fk_Game_1\`
-        FOREIGN KEY (\`matchId\`)
-        REFERENCES \`Match\` (\`id\`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-      CONSTRAINT \`fk_Game_2\`
-        FOREIGN KEY (\`winnerId\`)
-        REFERENCES \`Team\` (\`id\`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION)
-    ENGINE = InnoDB;
-    `)
-
-    await queryInterface.sequelize.query(`
-    CREATE TABLE IF NOT EXISTS \`Game\` (
-      \`id\` INT NOT NULL AUTO_INCREMENT,
-      \`matchId\` INT NULL,
-      \`winnerId\` INT NULL,
+      \`map\` VARCHAR(32) NOT NULL,
       PRIMARY KEY (\`id\`),
       INDEX \`fk_Game_1_idx\` (\`matchId\` ASC),
       INDEX \`fk_Game_2_idx\` (\`winnerId\` ASC),

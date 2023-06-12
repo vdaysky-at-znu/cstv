@@ -7,7 +7,7 @@ import {
     Optional,
     InferAttributes,
     InferCreationAttributes,
-    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin, NonAttribute, VirtualDataType
+    CreationOptional, HasOneGetAssociationMixin, HasManyGetAssociationsMixin, BelongsToGetAssociationMixin, NonAttribute, VirtualDataType, fn
 } from 'sequelize';
 
 import mysql2 from 'mysql2';
@@ -29,6 +29,7 @@ export enum UserRole {
 export class Team extends Model<InferAttributes<Team>, InferCreationAttributes<Team>>{
     declare id: CreationOptional<number>
     declare name: string
+    declare rating: number
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
     declare getPlayers: HasManyGetAssociationsMixin<Player>
@@ -42,6 +43,7 @@ Team.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        rating: DataTypes.INTEGER,
         name: DataTypes.STRING,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
@@ -189,6 +191,8 @@ export class Match extends Model<InferAttributes<Match>, InferCreationAttributes
     declare getWinner: HasOneGetAssociationMixin<Team>;
     declare getGames: HasManyGetAssociationsMixin<Game>;
 
+    declare games?: NonAttribute<Game[]>
+
     async getMapCount() {
         return (await this.getGames()).length;
     }
@@ -244,11 +248,43 @@ export class Game extends Model<InferAttributes<Game>, InferCreationAttributes<G
     // declare teamBId: number
     declare matchId: number
     declare winnerId?: number
+    declare map: string
 
     // declare getTeamA: HasOneGetAssociationMixin<Team>;
     // declare getTeamB: HasOneGetAssociationMixin<Team>;
     declare getMatch: HasOneGetAssociationMixin<Match>;
     declare getWinner: HasOneGetAssociationMixin<Team>;
+
+    async getScore(): [number, number] {
+        console.log("Get Game score");
+        
+        const [score] = await Round.findAll({
+            attributes: [
+                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `Game->Match`.teamAId then 1 else 0 end')), 'teamAWon'],
+                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `Game->Match`.teamBId then 1 else 0 end')), 'teamBWon'],
+            ],
+            raw: true,
+            include: [
+                {   
+                    attributes: [],
+                    model: Game,
+                    where: {
+                        id: this.id
+                    },
+                    include: [{
+                        attributes: [],
+                        model: Match,
+                    }]
+                }
+            ]
+        })
+        console.log("Scores:", score);
+        
+        return [
+            score.teamAWon as number,
+            score.teamBWon as number,
+        ]
+    }
 }
 
 Game.init(
@@ -258,6 +294,7 @@ Game.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        map: DataTypes.STRING,
         // teamAId: DataTypes.INTEGER,
         // teamBId: DataTypes.INTEGER,
         matchId: DataTypes.INTEGER,
@@ -273,7 +310,7 @@ Team.hasMany(Game, {foreignKey: 'winnerId'});
 Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
 
 Game.belongsTo(Match, {foreignKey: 'matchId'});
-Match.hasMany(Game, {foreignKey: 'matchId'});
+Match.hasMany(Game, {as: "games", foreignKey: 'matchId'});
 
 // Team.hasMany(Game, {as: 'gamesAsOne', foreignKey: 'teamAId'});
 // Game.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
