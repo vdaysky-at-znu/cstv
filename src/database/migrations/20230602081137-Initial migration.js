@@ -7,9 +7,10 @@ module.exports = {
     await queryInterface.sequelize.query(`
       CREATE TABLE IF NOT EXISTS \`Player\` (
         \`id\` INT NOT NULL AUTO_INCREMENT,
-        \`inGameName\` VARCHAR(45) NULL,
-        \`elo\` INT NULL,
+        \`inGameName\` VARCHAR(45) NOT NULL,
+        \`elo\` INT NOT NULL,
         \`teamId\` INT NULL,
+        \`photoUrl\` VARCHAR(256) NOT NULL,
         \`createdAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         \`updatedAt\` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (\`id\`))
@@ -42,6 +43,7 @@ module.exports = {
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`name\` VARCHAR(45) NULL,
       \`rating\` INT NOT NULL,
+      \`logoUrl\` VARCHAR(256) NOT NULL,
       \`createdAt\` DATETIME NOT NULL,
       \`updatedAt\` DATETIME NOT NULL,
       PRIMARY KEY (\`id\`))

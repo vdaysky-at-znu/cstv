@@ -8,15 +8,18 @@ module.exports = {
       {
         name: 'Natus Vincere',
         rating: 123,
+        logoUrl: "/navi.svg",
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
       }, {
         name: 'Vitality',
+        logoUrl: "/vitality.webp",
         rating: 223,
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
       }, {
         name: 'Monte Esports',
+        logoUrl: "/monte.webp",
         rating: 311,
         createdAt: '2000-01-01',
         updatedAt: '2000-01-01',
@@ -27,90 +30,105 @@ module.exports = {
       inGameName: 's1mple',
       elo: 100,
       teamId: 1,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/M_HZ0vz7Cd9dNP7lS283jo.png?ixlib=java-2.1.0&w=400&s=dd291b44af34444878bc9db7fbd89e29",
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'electronic',
       elo: 1,
       teamId: 1,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/M60OPidppxktmBkxtWxRZb.png?ixlib=java-2.1.0&w=400&s=68b152c1f167d0a0a5ff3661b33eb6c2",
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'b1t',
       elo: 100,
       teamId: 1,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/-wpQWEgpPtJERr0fGhpsaI.png?ixlib=java-2.1.0&w=400&s=7e7143243c98eae3cbafd7e984a8ecfa",
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Perfecto',
       elo: 1,
       teamId: 1,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/ZC0J_jEmkGRfQXmlncezRS.png?ixlib=java-2.1.0&w=400&s=0353fba645f82ee92ff205756999e04c",
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'NPL',
       elo: 100,
       teamId: 1,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/SMebvNX13AiGybec1L9HbK.png?ixlib=java-2.1.0&w=400&s=229146cf1cebcf195aa484d837b4f78d",
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       inGameName: 'ZywOo',
       elo: 101,
+      photoUrl: "https://img-cdn.hltv.org/teamlogo/yeXBldn9w8LZCgdElAenPs.png?ixlib=java-2.1.0&w=200&s=1803f5a02a92e431b9b7d8239fa15d47",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Magisk',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/2YQBwCCs3DnkjuzdZAbpel.png?ixlib=java-2.1.0&w=400&s=7db9549eb0b68633dff0fde24ec09db5",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'ApeX',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/vDksHfTWrFDEnn0l1SZs0Z.png?ixlib=java-2.1.0&w=400&s=a4bb4d87a77197f89550e2b0dbefcecc",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'dupreeh',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/o7msRJxwfm_ocbomcixhyK.png?ixlib=java-2.1.0&w=400&s=c467bce055bc7fca693f975758438103",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Spinx',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/g48HwD49Zckp1HwfSPs1ln.png?ixlib=java-2.1.0&w=400&s=e38bf6a0c1516d109127a14d528cba87",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'SDY',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/2wldXzlfsYMBhkJgfWZS2c.png?ixlib=java-2.1.0&w=400&s=d4fc6480a1728ebd6ad57da9d37346de",
       teamId: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'BOROS',
       elo: 200,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/8UCFXtQN6F8NjdxqcqZe6d.png?ixlib=java-2.1.0&w=400&s=adacc52ec63ca5d10fcf7786f3a12e32",
       teamId: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Woro2k',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/PV3jy5dkCmEbQ-c7JUGDo7.png?ixlib=java-2.1.0&w=400&s=3408d6915ba97548f7b6a8249bcec44c",
       teamId: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Krasnal',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/tqTf6mVhsr6hESsrdlTxma.png?ixlib=java-2.1.0&w=400&s=8b76c23dc1e5c8db82fe7602f20e55cf",
       teamId: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
     }, {
       inGameName: 'Demqq',
       elo: 100,
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/X82JOzCmNJa38JUVkFIHRA.png?ixlib=java-2.1.0&w=400&s=33567f9bdd678e267dd7812fa4944c28",
       teamId: 3,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -147,9 +165,9 @@ module.exports = {
 
     const roundsAnubis = [true, true, false, false, false, false, true, true, true, false, true, true, true, true, true, false, false, false, true, false, false, true, true, true, true, false, false, true];
 
-    for (let [i, won] in Object.entries(roundsAnubis)) {
+    for (let [i, won] of Object.entries(roundsAnubis)) {
       await queryInterface.bulkInsert('Round', [{
-        number: i + 1,
+        number: parseInt(i) + 1,
         winnerId: won ? 3 : 1,
         gameId: 1,
       }])

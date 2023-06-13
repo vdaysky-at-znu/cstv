@@ -34,6 +34,7 @@ export class Team extends Model<InferAttributes<Team>, InferCreationAttributes<T
     declare updatedAt: CreationOptional<Date>
     declare getPlayers: HasManyGetAssociationsMixin<Player>
     declare players: NonAttribute<Player[]>
+    declare logoUrl: string
 }
 
 Team.init(
@@ -43,6 +44,7 @@ Team.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        logoUrl: DataTypes.STRING,
         rating: DataTypes.INTEGER,
         name: DataTypes.STRING,
         createdAt: DataTypes.DATE,
@@ -61,6 +63,8 @@ export class Player extends Model<InferAttributes<Player>, InferCreationAttribut
     declare createdAt: CreationOptional<Date>
     declare updatedAt: CreationOptional<Date>
     declare team?: NonAttribute<Team>
+    declare teamId: number
+    declare photoUrl: string
 }
 
 Player.init(
@@ -70,7 +74,9 @@ Player.init(
             autoIncrement: true,
             primaryKey: true,
         },
+        photoUrl: DataTypes.STRING,
         inGameName: DataTypes.STRING,
+        teamId: DataTypes.NUMBER,
         elo: DataTypes.INTEGER,
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
@@ -249,31 +255,36 @@ export class Game extends Model<InferAttributes<Game>, InferCreationAttributes<G
     declare matchId: number
     declare winnerId?: number
     declare map: string
+    declare rounds?: NonAttribute<Round[]>
+    declare stats?: NonAttribute<PlayerStats[]>
 
     // declare getTeamA: HasOneGetAssociationMixin<Team>;
     // declare getTeamB: HasOneGetAssociationMixin<Team>;
     declare getMatch: HasOneGetAssociationMixin<Match>;
     declare getWinner: HasOneGetAssociationMixin<Team>;
+    declare match?: NonAttribute<Match>
 
     async getScore(): [number, number] {
         console.log("Get Game score");
         
         const [score] = await Round.findAll({
             attributes: [
-                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `Game->Match`.teamAId then 1 else 0 end')), 'teamAWon'],
-                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `Game->Match`.teamBId then 1 else 0 end')), 'teamBWon'],
+                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `game->match`.teamAId then 1 else 0 end')), 'teamAWon'],
+                [sequelize.fn('sum', Sequelize.literal('case when Round.winnerId = `game->match`.teamBId then 1 else 0 end')), 'teamBWon'],
             ],
             raw: true,
             include: [
                 {   
                     attributes: [],
                     model: Game,
+                    as: "game",
                     where: {
                         id: this.id
                     },
                     include: [{
                         attributes: [],
                         model: Match,
+                        as: "match",
                     }]
                 }
             ]
@@ -309,7 +320,7 @@ Game.init(
 Team.hasMany(Game, {foreignKey: 'winnerId'});
 Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
 
-Game.belongsTo(Match, {foreignKey: 'matchId'});
+Game.belongsTo(Match, {as: "match", foreignKey: 'matchId'});
 Match.hasMany(Game, {as: "games", foreignKey: 'matchId'});
 
 // Team.hasMany(Game, {as: 'gamesAsOne', foreignKey: 'teamAId'});
@@ -327,6 +338,8 @@ export class PlayerStats extends Model<InferAttributes<PlayerStats>, InferCreati
 
     declare getGame: HasOneGetAssociationMixin<Game>;
     declare getPlayer: HasOneGetAssociationMixin<Player>;
+    declare player?: NonAttribute<Player>
+    declare game?: NonAttribute<Game>
 
 }
 
@@ -353,8 +366,8 @@ Round.init({
     freezeTableName: true,
 })
 
-Round.belongsTo(Game, {foreignKey: 'gameId'})
-Game.hasMany(Round, {foreignKey: 'gameId'})
+Round.belongsTo(Game, {as: "game", foreignKey: 'gameId'})
+Game.hasMany(Round, {as: "rounds", foreignKey: 'gameId'})
 
 
 PlayerStats.init(
@@ -370,14 +383,15 @@ PlayerStats.init(
     }, {
         freezeTableName: true,
         sequelize,
+        timestamps: false,
     }
 )
 
-Game.hasMany(PlayerStats);
-Player.hasMany(PlayerStats);
+Game.hasMany(PlayerStats, {as: "stats", foreignKey: "gameId"});
+Player.hasMany(PlayerStats, {as: "game", foreignKey: "gameId"});
 
-PlayerStats.belongsTo(Game);
-PlayerStats.belongsTo(Player);
+PlayerStats.belongsTo(Game, {as: "game", foreignKey: "gameId"});
+PlayerStats.belongsTo(Player, {as: "player", foreignKey: "playerId"});
 
 export class Post extends Model<InferAttributes<Post>, InferCreationAttributes<Post>>{
     declare id: CreationOptional<number>
