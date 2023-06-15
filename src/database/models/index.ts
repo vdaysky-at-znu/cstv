@@ -12,6 +12,7 @@ import {
 
 import mysql2 from 'mysql2';
 import DiscussionCard from '@/components/discussion';
+import { StringLiteral } from 'typescript';
 
 let sequelize = new Sequelize(process.env.DB_NAME || "", process.env.DB_USER || "", process.env.DB_PASSWORD || "", {
     host: process.env.DB_HOST || 'localhost',
@@ -35,6 +36,19 @@ export class Team extends Model<InferAttributes<Team>, InferCreationAttributes<T
     declare getPlayers: HasManyGetAssociationsMixin<Player>
     declare players: NonAttribute<Player[]>
     declare logoUrl: string
+
+    async getWonEvents() {
+        return await Event.findAll({
+            include: [
+                {
+                    model: Team,
+                    where: {
+                        "$winner.id$": this.id
+                    }
+                }
+            ]
+        })
+    }
 }
 
 Team.init(
@@ -137,7 +151,11 @@ export class Event extends Model<InferAttributes<Event>, InferCreationAttributes
     declare getTeamTwos: HasManyGetAssociationsMixin<Team>;
 
     declare getMatches: HasManyGetAssociationsMixin<Match>;
-    declare teams?: Team[]
+    declare teams?: Team[];
+    declare winnerId: number;
+    declare winner: NonAttribute<Team>;
+    declare trophyUrl: string;
+    declare bannerUrl: string;
 
     async loadTeams(): Promise<Team[]> {
         
@@ -162,6 +180,9 @@ Event.init(
             primaryKey: true,
         },
         name: DataTypes.STRING,
+        winnerId: DataTypes.NUMBER,
+        trophyUrl: DataTypes.STRING,
+        bannerUrl: DataTypes.STRING,
         startsAt: DataTypes.TIME,
         teams: {
             type: DataTypes.VIRTUAL,
@@ -177,6 +198,9 @@ Event.init(
         sequelize
     }
 )
+
+Event.belongsTo(Team, {as: "winner", foreignKey: "winnerId"})
+Team.hasMany(Event, {as: "wonEvents", foreignKey: "winnerId"})
 
 export class Match extends Model<InferAttributes<Match>, InferCreationAttributes<Match>> {
     declare id: CreationOptional<number>
@@ -437,10 +461,26 @@ export class Discussion extends Model<InferAttributes<Discussion>, InferCreation
     declare replyToId?: number
     declare authorId: number
     declare author?: NonAttribute<User>
+    declare replyCount: NonAttribute<number>
+
+    declare replies?: NonAttribute<Discussion[]>
 
     declare getAuthor: HasOneGetAssociationMixin<User>;
     declare getReplyTo: HasOneGetAssociationMixin<Discussion>;
     declare getReplies: HasManyGetAssociationsMixin<Discussion>;
+
+    async loadReplies() {
+        this.replies = await this.getReplies();
+        console.log("set this replies for", this.id, "to", this.replies);
+        
+        return this.replies;
+    }
+
+    async loadRepliesRecursive() {
+        Promise.all((await this.loadReplies()).map(
+            reply => reply.loadRepliesRecursive()
+        ))
+    }
 }
 
 Discussion.init(

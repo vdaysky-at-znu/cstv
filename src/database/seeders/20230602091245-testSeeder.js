@@ -4,6 +4,10 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
 
+    const NaviId = 1;
+    const VitalityId = 2;
+    const MonteId = 3;
+
     await queryInterface.bulkInsert('Team', [
       {
         name: 'Natus Vincere',
@@ -65,7 +69,7 @@ module.exports = {
     {
       inGameName: 'ZywOo',
       elo: 101,
-      photoUrl: "https://img-cdn.hltv.org/teamlogo/yeXBldn9w8LZCgdElAenPs.png?ixlib=java-2.1.0&w=200&s=1803f5a02a92e431b9b7d8239fa15d47",
+      photoUrl: "https://img-cdn.hltv.org/playerbodyshot/cDLEVO33Lh8PtHQtUyF4Q9.png?ixlib=java-2.1.0&w=400&s=5ebc8a972b11d0fd81bfd922f4e0902c",
       teamId: 2,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -138,8 +142,14 @@ module.exports = {
       name: 'BlastTV Paris Major',
       startsAt: '2000-01-01',
       createdAt: '2000-01-01',
-      updatedAt: '2000-01-01'
+      updatedAt: '2000-01-01',
+      winnerId: 2,
+      trophyUrl: "https://img-cdn.hltv.org/eventtrophy/66nOdGyA6JExAXdwIpFXT6.png?ixlib=java-2.1.0&w=200&s=53fd52fe5f5c31d02ef5f755a7d1c055",
+      bannerUrl: "https://img-cdn.hltv.org/eventbanner/eTGKGO1m9wAXGZb5J5-mP0.png?ixlib=java-2.1.0&w=1276&s=6ec66c7297d94cae0ed7d7dacb56d554",
     }])
+
+    const NaviVsMonteId = 1;
+    const MonteVsVitalityId = 2;
 
     await queryInterface.bulkInsert('Match', [{
       teamAId: 1,
@@ -148,20 +158,62 @@ module.exports = {
       eventId: 1,
       startsAt: '2000-01-01',
       startedAt: '2000-01-01',
+    }, {
+      teamAId: MonteId,
+      teamBId: VitalityId,
+      winnerId: VitalityId,
+      eventId: 1,
+      startsAt: '2000-01-01',
+      startedAt: '2000-01-01',
     }])
+
+    const gameAnubisVit = 3;
+    const gameNukeVit = 4;
 
     await queryInterface.bulkInsert('Game', [
       {
-          matchId: 1,
-          winnerId: 3,
+          matchId: NaviVsMonteId,
+          winnerId: MonteId,
           map: "Anubis",
       },
       {
-        matchId: 1,
-        winnerId: 3,
+        matchId: NaviVsMonteId,
+        winnerId: MonteId,
         map: "Nuke",
       }
     ])
+
+    await queryInterface.bulkInsert('Game', [
+      {
+          matchId: MonteVsVitalityId,
+          winnerId: VitalityId,
+          map: "Anubis",
+      },
+      {
+        matchId: MonteVsVitalityId,
+        winnerId: VitalityId,
+        map: "Nuke",
+      }
+    ])
+
+    const roundsAnubisVit = [true, true, true, true, false, true, false, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, true, false, false];
+    const roundsNukeVit = [false, false, false, true, false, true, false, true, false, true, false, true, false, false, false, false, false, false, true, true, true, true, true, false, true, true, true, false, false]
+
+    for (let [i, won] of Object.entries(roundsAnubisVit)) {
+      await queryInterface.bulkInsert('Round', [{
+        number: parseInt(i) + 1,
+        winnerId: won ? MonteId : VitalityId,
+        gameId: gameAnubisVit,
+      }])
+    }
+
+    for (let [i, won] of Object.entries(roundsNukeVit)) {
+      await queryInterface.bulkInsert('Round', [{
+        number: parseInt(i) + 1,
+        winnerId: won ? MonteId : VitalityId,
+        gameId: gameNukeVit,
+      }])
+    }
 
     const roundsAnubis = [true, true, false, false, false, false, true, true, true, false, true, true, true, true, true, false, false, false, true, false, false, true, true, true, true, false, false, true];
 

@@ -54,9 +54,18 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS \`Event\` (
       \`id\` INT NOT NULL AUTO_INCREMENT,
       \`name\` VARCHAR(45) NULL,
+      \`trophyUrl\` VARCHAR(256) NOT NULL,
+      \`bannerUrl\` VARCHAR(256) NOT NULL,
+      \`winnerId\` INT NOT NULL,
       \`startsAt\` DATETIME NULL,
       \`createdAt\` DATETIME NOT NULL,
       \`updatedAt\` DATETIME NOT NULL,
+      INDEX \`fk_Event_1_idx\` (\`winnerId\` ASC),
+      CONSTRAINT \`fk_Event_1\`
+        FOREIGN KEY (\`winnerId\`)
+        REFERENCES \`Team\` (\`id\`)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION,
       PRIMARY KEY (\`id\`))
     ENGINE = InnoDB;
     `)
