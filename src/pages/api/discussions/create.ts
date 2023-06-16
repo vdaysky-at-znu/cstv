@@ -1,15 +1,16 @@
 import { NextApiResponse } from "next";
 import { createRouter } from "next-connect"
-import { CreateDiscussionBody, createDiscussion } from "@/services/discussion"
-
+import DiscussionService, { CreateDiscussionBody } from "@/services/discussion"
 import {requireAuth, AuthenticatedApiRequest} from "@/services/passport";
+import { getService } from "@/container";
 
 export const router = createRouter<AuthenticatedApiRequest, NextApiResponse>();
 router
 .use(requireAuth())
 .post(async (req, res) => {
+  const discussionService = getService(DiscussionService);
     const data: CreateDiscussionBody = req.body;
-    const discussion = await createDiscussion(req.user, data);
+    const discussion = await discussionService.createDiscussion(req.user, data);
     res.json({discussion});
 });
 

@@ -6,6 +6,7 @@ export default function Input(props) {
     const block = "block" in props;
     const rightIcon = props.rightIcon || null;
     const leftIcon = props.leftIcon || null;
+    const color = props.color;
 
     if (props.type === "datetime") {
         return <DatePicker
@@ -25,6 +26,7 @@ export default function Input(props) {
             {...props}
             className={
                 (block ? "block w-full " : "") +
+                " " + color + " " + 
                 props.className +
                 " bg-gray-300 border border-gray-200 py-3  shadow-inner placeholder-gray-600 rounded-lg " +
                 (rightIcon ? "pr-4 " : "pr-2 ") +

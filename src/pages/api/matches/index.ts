@@ -1,13 +1,15 @@
 import {createRouter} from "next-connect";
 import {AuthenticatedApiRequest, requireRole} from "@/services/passport";
 import {NextApiResponse} from "next";
-import {UserRole} from "@/database/models";
-import {createMatch} from "@/services/match";
+import MatchService from "@/services/match";
+import { UserRole } from "@/database/models/user";
+import { getService } from "@/container";
 
 const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
     .use(requireRole(UserRole.Admin))
     .put(async (req, res) => {
-        const match = createMatch(req.body);
+        const service = getService(MatchService);
+        const match = await service.createMatch(req.body);
         res.json({match});
     });
 

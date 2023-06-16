@@ -8,10 +8,11 @@ export type DataOption<T> = {
     value: T
 }
 
-export type AutoDataSource<T> = (prompt: string) => Promise<DataOption<T>[]>
+export type AutoDataSource<T> = (prompt: string, limit: number) => Promise<T[]>
 
 type CProps<T> = {
     source: AutoDataSource<T>,
+    limit?: number,
     minLength?: number,
     onSelect: (val: T) => void,
     title: (val: T) => string,
@@ -53,7 +54,7 @@ export default class AutoInput<T> extends React.Component<CProps<any>, CState<an
     onValueChange(value: string) {
         if ((value?.length || 0) >= (this.props.minLength || 0)) {
             this.setState({isOpen: true, realInputValue: value});
-            this.props.source(value).then((options: any[]) => {
+            this.props.source(value, this.props.limit || 5).then((options: any[]) => {
                 this.setState({options})
             })
         }

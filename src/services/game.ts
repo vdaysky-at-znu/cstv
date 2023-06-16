@@ -1,19 +1,27 @@
-import { Game } from "../database/models"
+import BaseContext from "@/baseContext";
 
-export async function getGames() {
-    return await Game.findAll();
-}
 
 export type GameBody = {
-    teamAId: number
-    teamBId: number
     matchId: number
+    winnerId: number
+    map: string
 }
 
-export async function createGame(data: GameBody) {
-    return await Game.create({
-        teamAId: data.teamAId,
-        teamBId: data.teamBId,
-        matchId: data.matchId
-    });
+
+
+
+export default class GameService extends BaseContext {
+
+     async getGames() {
+        return await this.di.Game.findAll();
+    }
+
+    
+     async  createGame(data: GameBody) {
+        return await this.di.Game.create(data);
+    }
+
+     async  getGameById(id: number, opts: {[key: string]: any}) {
+        return await this.di.Game.findByPk(id, opts);
+    }
 }

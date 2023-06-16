@@ -1,8 +1,7 @@
 import { promisify } from 'util';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { findUserWithEmailAndPassword, getUser } from './user'
-import {User, UserRole} from "@/database/models";
+import UserService from './user'
 import {createRouter} from "next-connect";
 import {NextApiRequest, NextApiResponse} from "next";
 import RedisStore from "connect-redis";
@@ -11,16 +10,20 @@ import nextSession from "next-session";
 import {promisifyStore} from "next-session/lib/compat";
 import {promisifyMiddleware} from "@/services/utils";
 import {IncomingMessage} from "http";
+import { IUser, UserRole } from '@/database/models/user';
+import container, { getService } from '@/container';
+
+const userService = getService(UserService);
 
 passport.serializeUser((user: Express.User, done: (err: any, id?: any) => void) => {
-    const myUser = user as User;
+    const myUser = user as IUser;
     console.log('passport serialize, userId=', "" + myUser.id);
     done(null, myUser.id);
 });
 
 passport.deserializeUser((req: any, id: number, done: any) => {
   console.log('passport deserialize, userId', id);
-  getUser(id).then(user => {done(null, user)});
+  userService.getUser(id).then(user => {done(null, user)});
 });
 
 passport.use(
@@ -30,7 +33,7 @@ passport.use(
       passReqToCallback: true,
     },
     (req: any, username: string, password: string, done: any) => {
-        findUserWithEmailAndPassword(username, password)
+      userService.findUserWithEmailAndPassword(username, password)
         .then((user) => {
           if (user) {
             done(null, user);
@@ -86,8 +89,8 @@ export const requireRole = (role: UserRole) => createRouter<AuthenticatedApiRequ
     });
 
 /** Middleware that will authenticate user based on login and password */
-export const logIn: ((req: any, res: any, next: any) => Promise<unknown>) = promisify(passport.authenticate('local'));
+export const logIn: ((req: any, res: any, next: any) => Promise<unknown>) = promisifyMiddleware(passport.authenticate('local'));
 
 export type AuthenticatedApiRequest = NextApiRequest & {
-    user: User;
+    user: IUser;
 }

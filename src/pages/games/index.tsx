@@ -1,17 +1,20 @@
-import { getGames } from "@/services/game";
-import { Game } from "@/database/models";
+import { getService } from "@/container";
+import { IGame } from "@/database/models/game";
+import GameService from "@/services/game";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export const getServerSideProps: GetServerSideProps<{
-    games: Game[] | null;
+    games: IGame[] | null;
     isError: boolean;
 }> = async () => {
 
     let games = null;
     let isError = true;
     
+    const service = getService(GameService);
+
     try {
-        const gameModels = await getGames();
+        const gameModels = await service.getGames();
         games = JSON.parse(JSON.stringify(gameModels));
         isError = false;
     } catch (e) {

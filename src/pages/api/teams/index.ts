@@ -1,10 +1,9 @@
 import {NextApiResponse} from "next";
 import {AuthenticatedApiRequest, requireRole} from "@/services/passport";
 import {createRouter} from "next-connect";
-import {UserRole} from "@/database/models";
-import {createEvent} from "@/services/event";
-import {getEvents} from "@/services/event";
-import {getTeams} from "@/services/team";
+import TeamService from "@/services/team";
+import { UserRole } from "@/database/models/user";
+import { getService } from "@/container";
 
 const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
     .use(requireRole(UserRole.Admin))
@@ -13,8 +12,9 @@ const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
     //     res.json({team});
     // })
     .get(async (req, res) => {
+        const service = getService(TeamService);
         const {name}: {name: string} = req.query;
-        const teams = await getTeams({name});
+        const teams = await service.getTeams({name});
         res.json({teams});
     });
 

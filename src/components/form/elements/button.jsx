@@ -9,8 +9,12 @@ export default function Button(props) {
 
     const denseSize = variant == "tile" ? " py-3 ": " py-2 ";
     const normalSize = variant == "tile" ? " py-3 ": " py-2 ";
-    const bgColor = variant == "flat" ? " ": " bg-green-600 ";
-    const textColor = variant == "flat" ? " text-black ": " text-white ";
+    let bgColor = variant == "flat" ? " ": " bg-green-600 ";
+    const textColor =  props.text || (variant == "outline" ? "text-green-600 " : (variant == "flat" ? " text-black ": " text-white "));
+
+    if (props.color) { 
+        bgColor = props.color;
+    }
 
     if (props.href) {
         return <div className={
@@ -31,11 +35,11 @@ export default function Button(props) {
             {...props} 
             className={ 
                 className + 
-                (variant == "outline" ? " border-green-600 border-2 text-green-600 " : bgColor) +
+                (variant == "outline" ? (bgColor || "border-green-600") + " border-2  " : bgColor) +
                 (variant == "flat" ? "" : " ") +
                 (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
                 (block ? "block w-full " : "") +
-                (variant == "tile" ? "bg-gray-100 ": "rounded-lg ") +
+                (variant == "tile" ? " ": "rounded-lg ") +
                 textColor
             }>
             { props.children }

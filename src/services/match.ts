@@ -1,8 +1,8 @@
-import { Match } from "@/database/models"
+import BaseContext from "@/baseContext";
+import { IPlayer } from "@/database/models/player";
+import { Op, Sequelize } from "sequelize";
 
-export async function getMatches(opts: {[key: string]: any}) {
-    return await Match.findAll({...opts, include: ['teamA', 'teamB', 'event']});
-}
+
 
 export type MatchBody = {
     teamAId: number
@@ -13,8 +13,16 @@ export type MatchBody = {
     startedAt: Date
 }
 
-export async function createMatch(data: MatchBody) {
-    return await Match.create({
+
+
+export default class MatchService extends BaseContext {
+
+   async  getMatches(opts: {[key: string]: any} = {}) {
+    return await this.di.Match.findAll({...opts, include: ['teamA', 'teamB', 'event']});
+}
+
+   async  createMatch(data: MatchBody) {
+    return await this.di.Match.create({
         teamAId: data.teamAId,
         teamBId: data.teamBId,
         startsAt: data.startsAt,
@@ -22,4 +30,39 @@ export async function createMatch(data: MatchBody) {
         winnerId: data.winnerId,
         eventId: data.eventId,
     });
+}
+
+ async  getMatchById(id: number, opts: {[key: string]: any} = {}) {
+    return await this.di.Match.findByPk(id, opts);
+}
+
+ async  getParticipantsAtMatch(id: number): Promise<IPlayer[]> {
+    
+    const players = await this.di.Player.findAll({
+        attributes: ["id", "inGameName"],
+        include: [
+          {
+            attributes: ["id", "name"],
+            model: this.di.Team,
+            where: {
+                id: {
+                    [Op.ne]: null
+                }
+            },
+            as: 'team',
+            include: [
+              {
+                attributes: [],
+                model: this.di.Match,
+               where: {
+                 id: 1, 
+               },
+               on: Sequelize.literal("`team`.id = `team->Matches`.`teamAId` OR `team`.id = `team->Matches`.`teamBId`") 
+              },
+            ],
+          },
+        ],
+      });
+    return players;
+}
 }

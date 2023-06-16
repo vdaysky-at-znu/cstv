@@ -1,13 +1,15 @@
 import {NextApiResponse} from "next";
 import {AuthenticatedApiRequest, requireRole} from "@/services/passport";
 import {createRouter} from "next-connect";
-import {UserRole} from "@/database/models";
-import {createGame} from "@/services/game";
+import GameService from "@/services/game";
+import { getService } from "@/container";
+import { UserRole } from "@/database/models/user";
 
 const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
 .use(requireRole(UserRole.Admin))
 .put(async (req, res) => {
-    const game = createGame(req.body);
+    const service = getService(GameService);
+    const game = await service.createGame(req.body);
     res.json({game});
 });
 

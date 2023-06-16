@@ -1,10 +1,12 @@
-import { Match } from "@/database/models";
+import { IMatch } from "@/database/models/match";
 import MatchCard from ".";
-import { getMatches } from "@/services/match";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-export default function MatchesTable({ matches, scores }: {matches: Match[], scores: [number, number][]}) {
+export default function MatchesTable({ matches, scores }: {matches: IMatch[], scores: [number, number][]}) {
     return <div>
-        { matches.map((match, i) => <div key={i} className="mt-2"><MatchCard match={match} score={scores[i]} key={i} /></div>) }
+        { 
+        matches.map((match, i) => <div key={i} className="border-b border-gray-400 last:border-b-0">
+            <MatchCard tile={false} match={match} score={scores[i]} key={i} />
+        </div>) 
+        }
     </div>
 }

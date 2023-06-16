@@ -21,9 +21,9 @@ export enum FieldType {
 type FormField<FieldValue> = {
     name: string,
     type: FieldType,
-    label: string,
-    placeholder: string,
-    source?: (prompt: string) => Promise<FieldValue[]>,
+    label?: string,
+    placeholder?: string,
+    source?: AutoDataSource<any>,
     title?: (val: FieldValue) => string,
 }
 
@@ -37,7 +37,7 @@ function FormFieldElement<T>(
 
     if (field.type == FieldType.TEXT) {
         return <div className="mt-2">
-            <label className="text-lg font-semibold">{field.label}</label>
+            <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <Input
                 block
                 value={value}
@@ -49,7 +49,7 @@ function FormFieldElement<T>(
 
     if (field.type == FieldType.DATETIME) {
         return <div className="mt-2">
-            <label className="text-lg font-semibold">{field.label}</label>
+            <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <Input
                 block
                 type="datetime"
@@ -62,7 +62,7 @@ function FormFieldElement<T>(
 
     if (field.type == FieldType.AUTOCOMPLETE) {
         return <div className="mt-2">
-            <label className="text-lg font-semibold">{field.label}</label>
+            <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <AutoInput
                 title={field.title || (() => "no title")}
                 source={field.source || (async () => [])}
@@ -73,7 +73,7 @@ function FormFieldElement<T>(
 
     if (field.type == FieldType.DROPDOWN) {
         return <div className="mt-2">
-            <label className="text-lg font-semibold">{field.label}</label>
+            <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <SelectInput
                 onSelect={(e) => onValueChange(e)}
                 source={field.source || (async () => [])}

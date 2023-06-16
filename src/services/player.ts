@@ -1,9 +1,23 @@
-import { Player } from "../database/models"
+import BaseContext from "@/baseContext";
+import { Op } from "sequelize";
 
-export async function getPlayers() {
-    return await Player.findAll();
-}
+export default class PlayerService extends BaseContext {
+     async getPlayers({name}: {name?: string} = {}) {
 
-export async function getPlayerById(id: number, opts: any = {}) {
-    return await Player.findByPk(id, {...opts});
+        const opts = {where: {}};
+    
+        if (name != null) {
+            opts.where = {
+                inGameName: {
+                    [Op.like]: `%${name}%`
+                }
+            }
+        }
+    
+        return await  this.di.Player.findAll(opts);
+    }
+    
+     async  getPlayerById(id: number, opts: any = {}) {
+        return await this.di.Player.findByPk(id, {...opts});
+    }
 }

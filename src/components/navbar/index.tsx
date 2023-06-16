@@ -26,10 +26,10 @@ export default function Navbar() {
     function AuthButton () {
         return <div className="w-full">
             { user ?
-                <Button className="bg-green-500 text-white bg-red-600" variant="tile" href="/users/register" block dense >
+                <Button onClick={logout} className="bg-green-500 text-white bg-red-600" variant="tile" href="/users/register" block dense >
                     <FontAwesomeIcon icon={faSignOut} />
                 </Button> :
-                <Button className="bg-green-500 text-white" variant="tile" href="#" dense block onClick={logout}>
+                <Button className="bg-green-500 text-white" variant="tile" href="/users/login" dense block>
                     <FontAwesomeIcon icon={faSignIn} />
                 </Button>
             }

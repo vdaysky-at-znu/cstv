@@ -1,41 +1,19 @@
 import {GetServerSideProps} from "next";
 import {createRouter} from "next-connect";
 import {requireAuth} from "@/services/passport";
-import {Event, Match, Team, UserRole} from "@/database/models";
 import Input from "@/components/form/elements/input";
 import Button from "@/components/form/elements/button";
 import FormTemplate, {FieldType} from "@/components/form/formTemplate";
 import {findEvents, findTeams} from "@/services/client/api";
 import {useState} from "react";
+import { UserRole } from "@/database/models/user";
 
 export default function AdminPage() {
 
     const [createMatchData, setCreateMatch] = useState({} as any);
 
     return <div className="mt-10 rounded-lg bg-gray-100 mx-2 px-2 py-2">
-        <div>
-            <FormTemplate
-                fields={[
-                    {
-                        type: FieldType.TEXT,
-                        placeholder: "Event Name",
-                        name: "name",
-                        label: "Event Name"
-                    },
-                    {
-                        type: FieldType.DATETIME,
-                        placeholder: "Starts At",
-                        name: "startsAt",
-                        label: "Starts At"
-                    }
-                ]}
-                onSubmit={(values) => {
-                    console.log("submit", values);
-                }}
-                title={"Create Event"}
-                submitText={"Create Event"}
-            />
-        </div>
+        
         <div>
             <h1>Matches</h1>
             <div>
@@ -43,48 +21,7 @@ export default function AdminPage() {
         </div>
         <div>
             <h1>Games</h1>
-            <div>
-                <FormTemplate fields={[
-                    {
-                        type: FieldType.DROPDOWN,
-                        placeholder: "Match",
-                        name: "match",
-                        label: "Match",
-                        source: async () => {
-                            return [];
-                        },
-                        title: (m: Match) => "#" + m.id,
-                    },
-                    {
-                        type: FieldType.DROPDOWN,
-                        placeholder: "Winner",
-                        name: "winner",
-                        label: "Winner",
-                        source: async () => {
-                            return [];
-                        },
-                        title: (t: Team) => t.name
-                    },
-                    {
-                        type: FieldType.AUTOCOMPLETE,
-                        placeholder: "Map",
-                        name: "map",
-                        label: "Map",
-                        source: async (prompt) => {
-                            return [
-                                {name: "Anubis"},
-                                {name: "Inferno"},
-                                {name: "Mirage"},
-                                {name: "Nuke"},
-                                {name: "Overpass"},
-                                {name: "Vertigo"},
-                                {name: "Ancient"},
-                            ].filter(x => x.name.toLowerCase().includes(prompt.toLowerCase()))
-                        },
-                        title: (t: any) => t.name
-                    }
-                ]} />
-            </div>
+            
         </div>
         <div>
             <h1>Stats</h1>
@@ -124,8 +61,8 @@ export default function AdminPage() {
                 <Button block>Submit</Button>
             </div>
         </div>
-
     </div>
+</div>
 }
 
 const router = createRouter()

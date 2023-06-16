@@ -1,9 +1,10 @@
-import {Event, Team} from "@/database/models";
 import FormTemplate, {FieldType} from "@/components/form/formTemplate";
-import {findEvents, findTeams} from "@/services/client/api";
+import { IEvent } from "@/database/models/event";
+import { ITeam } from "@/database/models/team";
+import {findTeams} from "@/services/client/api";
 import {useState} from "react";
 
-export default function AddMatch({event}: {event: Event}) {
+export default function AddMatch({event}: {event: IEvent}) {
 
     const [createMatchData, setCreateMatch] = useState({} as any);
 
@@ -20,7 +21,7 @@ export default function AddMatch({event}: {event: Event}) {
                 source: async (prompt: string) => {
                     return await findTeams(prompt)
                 },
-                title: (evt: Event) => evt.name,
+                title: (evt: IEvent) => evt.name,
             },
             {
                 type: FieldType.AUTOCOMPLETE,
@@ -30,7 +31,7 @@ export default function AddMatch({event}: {event: Event}) {
                 source: async (prompt: string) => {
                     return await findTeams(prompt)
                 },
-                title: (evt: Event) => evt.name,
+                title: (evt: IEvent) => evt.name,
             },
             {
                 type: FieldType.DROPDOWN,
@@ -43,7 +44,7 @@ export default function AddMatch({event}: {event: Event}) {
                         createMatchData?.teamB || {name: "TBD"},
                     ]
                 },
-                title: (team: Team) => team?.name,
+                title: (team: ITeam) => team?.name,
             }
         ]}
         />
