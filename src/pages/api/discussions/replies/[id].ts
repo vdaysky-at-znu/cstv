@@ -11,7 +11,6 @@ router.get(async (req, res) => {
     const {id} = req.query;
 
     const replies = await discussionService.getRepliesTo(id);
-    console.log("replies", replies);
     
     res.json({replies});
 });

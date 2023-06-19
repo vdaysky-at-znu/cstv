@@ -2,32 +2,30 @@ import DatePicker from "react-datepicker";
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-export default function Input(props) {
-    const block = "block" in props;
-    const rightIcon = props.rightIcon || null;
-    const leftIcon = props.leftIcon || null;
-    const color = props.color;
+export default function Input({readonly = false, placeholder = "", type = "", rightIcon = undefined, leftIcon = undefined, color
+, className = undefined, value = undefined, onChange = undefined, innerRef = undefined, block = false}: {[key: string]: any} = {}) {
 
-    if (props.type === "datetime") {
+    if (type === "datetime") {
         return <DatePicker
-            {...props}
             className={
                 (block ? "block w-full " : "") +
-                props.className +
+                className +
                 " bg-gray-300 border border-gray-200 px-4 py-3  shadow-inner placeholder-gray-600 rounded-lg"
             }
-            selected={props.value}
-            onChange={props.onChange}
+            placeholder={placeholder}
+            selected={value}
+            onChange={onChange}
         />
     }
 
-    return <div className="relative">
-        <input
-            {...props}
+    return <div className={block ? "w-full " : "" + "relative"}>
+        <input readOnly={readonly} ref={innerRef}
+            onChange={onChange}
+            placeholder={placeholder}
             className={
                 (block ? "block w-full " : "") +
                 " " + color + " " + 
-                props.className +
+                className +
                 " bg-gray-300 border border-gray-200 py-3  shadow-inner placeholder-gray-600 rounded-lg " +
                 (rightIcon ? "pr-4 " : "pr-2 ") +
                 (leftIcon ? "pl-4 " : "pl-2 ") +

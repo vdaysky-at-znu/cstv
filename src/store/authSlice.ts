@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AppState } from "./store";
 import { HYDRATE } from "next-redux-wrapper";
-import {User} from "@/database/models";
+import {IUser} from "@/database/models/user";
 
 // Type for our state
 export interface AuthState {
-    user: User | null;
+    user: IUser | null;
 }
 
 // Initial state

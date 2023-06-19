@@ -1,5 +1,5 @@
 import { createRouter } from "next-connect";
-import { requireAuth } from "./passport";
+import { useAuth } from "./passport";
 import { GetServerSideProps } from "next";
 import { UserRole } from "@/database/models/user";
 
@@ -21,7 +21,7 @@ export function promisifyMiddleware(middleware: any) {
 export function GSSPIsAdmin<T extends {[key: string]: any}>(f: GetServerSideProps<T>): GetServerSideProps<T & {isAdmin: boolean, isAuthenticated: boolean}> {
 
     const router = createRouter()
-        .use(requireAuth())
+        .use(useAuth())
         .get(async (req, res) => {
             return req?.user;
         });

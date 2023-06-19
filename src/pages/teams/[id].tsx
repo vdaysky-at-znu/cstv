@@ -23,8 +23,8 @@ export default function TeamPage({team, matches, events, eventTeams}: InferGetSe
     return <div className='mx-2 rounded-lg shadow-lg bg-gray-100 px-1 py-2 mt-10'>
         <div className='flex py-2 justify-between'>
             <div className='flex'>
-                <img className='' src={team.logoUrl}></img>
-                <h1 className='text-xl py-3 px-2 font-bold'>{ team.name }</h1>
+                <img className='max-h-[50px]' src={team.logoUrl}></img>
+                <h1 className='text-xl py-3 px-2 font-bold whitespace-nowrap'>{ team.name }</h1>
             </div>
             <div className='flex items-center px-2'>
                 <span className='text-gray-600'>#1</span>

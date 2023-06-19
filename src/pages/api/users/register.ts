@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect"
 import UserService, { RegisterBody } from "@/services/user"
-import {AuthenticatedApiRequest, logIn, mySession, requireAuth} from "@/services/passport";
+import {AuthenticatedApiRequest, logIn, mySession, useAuth} from "@/services/passport";
 import { HTTPException } from "@/exceptions";
 import { promisifyMiddleware } from "@/services/utils";
 import passport from "passport";

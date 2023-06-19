@@ -1,6 +1,8 @@
 import BaseContext, { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, HasManyGetAssociationsMixin, NonAttribute, DataTypes, BuildOptions } from "sequelize";
-import { Player } from ".";
+import { IModelType } from ".";
+import { IPlayer } from "./player";
+import container from "@/container";
 
 
 export interface TeamData {
@@ -9,22 +11,20 @@ export interface TeamData {
     rating: number
     createdAt: CreationOptional<Date>
     updatedAt: CreationOptional<Date>
-    players: NonAttribute<Player[]>
+    players: NonAttribute<IPlayer[]>
     logoUrl: string
 }
 
 export interface ITeam extends TeamData, Model {
-    getPlayers: HasManyGetAssociationsMixin<Player>
+    getPlayers: HasManyGetAssociationsMixin<IPlayer>
     getWonEvents(): Promise<Event[]>;
 }
 
-export type ITeamType = typeof Model & ITeam & { 
-    new(values?: object, options?: BuildOptions): ITeam;
-}
+export type ITeamType = IModelType<ITeam>
 
-export default (ctx: IContextContainer): ITeamType => {
+export default ({db}: IContextContainer): ITeamType => {
 
-    const Team = <ITeamType> ctx.db.define("Team", {
+    const Team = <ITeamType> db.define("Team", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -40,17 +40,12 @@ export default (ctx: IContextContainer): ITeamType => {
         timestamps: true,
     })
 
-    Team.getWonEvents = async function() {
-        return await ctx.Event.findAll({
-            include: [
-                {
-                    model: Team,
-                    where: {
-                        "$winner.id$": this.id
-                    }
-                }
-            ]
-        })
+    Team.initRels = function () {
+        const Player = container.resolve("Player");
+        const Event = container.resolve("Event")
+
+        Team.hasMany(Player, {as: 'players', foreignKey: 'teamId'})
+        Team.hasMany(Event, {as: 'wonEvents', foreignKey: 'winnerId'})
     }
 
     return Team;

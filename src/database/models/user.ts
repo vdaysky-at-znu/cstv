@@ -1,6 +1,7 @@
 import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, HasOneGetAssociationMixin, BuildOptions } from "sequelize";
 import { IPlayer } from "./player";
+import { IModelType } from ".";
 
 export enum UserRole {
     User = 1,
@@ -13,6 +14,7 @@ export interface UserData {
     role: number;
     username: string;
     passwordHash: string;
+    player?: IPlayer
     readonly createdAt: CreationOptional<Date>;
     readonly updatedAt: CreationOptional<Date>;
     getPlayer: HasOneGetAssociationMixin<IPlayer>;
@@ -22,9 +24,7 @@ export interface IUser extends UserData, Model {
     
 }
 
-export type IUserType = typeof Model & IUser & {
-    new(values?: object, options?: BuildOptions): IUser;
-}
+export type IUserType = IModelType<IUser>
 
 export default ({db, Player}: IContextContainer): IUserType => {
     
@@ -47,11 +47,10 @@ export default ({db, Player}: IContextContainer): IUserType => {
         freezeTableName: true,
     })
 
-    console.log("======================= Load user relations");
-    
-
-    User.belongsTo(Player);
-    Player.hasOne(User);
+    User.initRels = function () {
+        User.belongsTo(Player, {as: 'player'});
+        Player.hasOne(User);
+    }
 
     return User;
 }

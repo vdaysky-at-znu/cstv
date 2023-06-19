@@ -14,9 +14,37 @@ import { IDiscussion } from "@/database/models/discussion";
 import DiscussionService from "@/services/discussion"
 
 import container, { getService } from "@/container";
+import { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addComment, createComment } from "@/store/actions";
+import { selectRootDiscussions } from "@/store/discussionSlice";
 
 export default function Home({posts, discussions, teams, isAuthenticated}: InferGetServerSidePropsType<typeof getServerSideProps>) {
     
+
+   const contentRef = useRef<HTMLTextAreaElement>();
+   const titleRef = useRef<HTMLInputElement>();
+
+   const dispatch = useDispatch();
+
+   const ractiveDiscussions = useSelector(selectRootDiscussions);
+
+   if (!ractiveDiscussions.length) {
+      discussions.forEach( d => dispatch(addComment(d)) )
+   }
+
+   async function postDiscussion() {
+      
+      const text = contentRef?.current?.value;
+      const title = titleRef?.current?.value;
+      
+      console.log(text, title);
+      
+      if (!text || !title) return;
+      
+      dispatch(createComment(null, text, title));
+   }
+
    return <div className="mt-10 mx-2">
       
       <div>
@@ -44,7 +72,7 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
             <h1 className="text-xl ml-5">Latest Discussions</h1>
             <div>
                {
-                  discussions.map(
+                  ractiveDiscussions.map(
                      (discussion, i) => <div className="mt-2 shadow-lg">
                         <DiscussionCard key={i} discussion={discussion}></DiscussionCard>
                      </div>
@@ -60,12 +88,12 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
       { 
          isAuthenticated && <div>
             <h2 className="text-lg mt-5 font-thin text-center">Write something</h2>
-            <Input block color="bg-white" placeholder="Discussion Title" />
+            <Input innerRef={titleRef} block color="bg-white" placeholder="Discussion Title" />
             <div className="mt-2">
-               <TextArea placeholder="Discussion Text" />
+               <TextArea innerRef={contentRef} placeholder="Discussion Text" />
             </div>
             
-            <Button block  variant="outline"> Post </Button>
+            <Button block onClick={postDiscussion} variant="outline"> Post </Button>
          </div> 
       }
       
@@ -84,8 +112,8 @@ export const getServerSideProps: GetServerSideProps<{
    const discussionService = getService(DiscussionService);
    const teamService = getService(TeamService);
 
-   const posts = await postService.getPosts({include: {association: "author" }});
-   const discussions = await discussionService.getRootDiscussions({include: {association: "author"}})
+   const posts = await postService.getPosts({limit: 10, include: {association: "author" }});
+   const discussions = await discussionService.getRootDiscussions({limit: 10, include: {association: "author"}})
    const teams = await teamService.getTeams();
 
    return {

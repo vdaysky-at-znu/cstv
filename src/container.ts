@@ -2,7 +2,7 @@ import * as awilix from "awilix";
 import { InferAttributes, InferCreationAttributes, Model, Sequelize } from "sequelize";
 import mysql2 from 'mysql2';
 import services, { IServicesContainer } from "@/services";
-import models, { IModelContainer } from "@/database/models";
+import models, { IModelContainer, IModelType } from "@/database/models";
 
 export interface IContextContainer extends IModelContainer, IServicesContainer {
     db: Sequelize;
@@ -26,8 +26,26 @@ container.register({
     db: awilix.asFunction(createDB).singleton(),
 })
 
+export default container;
+
+//#region model relationship resolution
+const resolvedModels: IModelType<unknown>[] = [];
+
+for (const modelName in models) {
+    const model: IModelType<unknown> = container.resolve(modelName);
+    resolvedModels.push(model);
+
+}
+
+for (const resoledModel of resolvedModels) {
+    if (typeof resoledModel.initRels != "function") {
+        throw new Error("Model " + resoledModel.name + " does not have initRels method")
+    }
+    resoledModel.initRels();
+}
+//#endregion
+
 export function getService<T extends {new(opts: IContextContainer): InstanceType<T>}>(serviceType: T): InstanceType<T> {
     return container.resolve(serviceType.name);
 }
 
-export default container;

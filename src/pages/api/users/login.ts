@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect"
 
-import {AuthenticatedApiRequest, logIn, requireAuth} from "@/services/passport";
+import {AuthenticatedApiRequest, logIn, useAuth} from "@/services/passport";
 
 export const router = createRouter<AuthenticatedApiRequest, NextApiResponse>();
 router
-.use(requireAuth())
+.use(useAuth())
 .use(logIn)
 .post(async (req, res) => {
     const user = JSON.parse(JSON.stringify(req.user));

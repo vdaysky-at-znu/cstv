@@ -1,6 +1,7 @@
 import { IContextContainer } from "@/baseContext"
 import { BelongsToGetAssociationMixin, BuildOptions, CreationOptional, DataTypes, Model } from "sequelize"
 import { ITeam } from "./team"
+import { IModelType } from "."
 
 
 export interface RoundData {
@@ -14,9 +15,7 @@ export interface IRound extends Model, RoundData {
     getWinner: BelongsToGetAssociationMixin<ITeam>
 }
 
-export type IRoundType = typeof Model & IRound & {
-    new(values?: object, options?: BuildOptions): IRound;
-}
+export type IRoundType = IModelType<IRound>
 
 export default ({db}: IContextContainer): IRoundType => {
     const Round = <IRoundType> db.define("Round", {
@@ -32,6 +31,10 @@ export default ({db}: IContextContainer): IRoundType => {
         timestamps: false,
         freezeTableName: true,
     });
+
+    Round.initRels = function () {
+        
+    }
 
     return Round;
 }

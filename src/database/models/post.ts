@@ -1,6 +1,7 @@
 import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, BelongsToGetAssociationMixin, BuildOptions } from "sequelize";
 import { IUser } from "./user";
+import { IModelType } from ".";
 
 
 export interface PostData {
@@ -18,9 +19,7 @@ export interface IPost extends PostData, Model {
     getAuthor: BelongsToGetAssociationMixin<IUser>;
 }
 
-export type IPostType = typeof Model & IPost & {
-    new(values?: object, options?: BuildOptions): IPost;
-}
+export type IPostType = IModelType<IPost>
 
 export default ({User, db}: IContextContainer): IPostType => {
 
@@ -40,10 +39,10 @@ export default ({User, db}: IContextContainer): IPostType => {
         freezeTableName: true,
     })
 
-    console.log("======================= load relations for post");
-    
-    Post.belongsTo(User, {as: 'author', foreignKey: 'authorId'});
-    User.hasMany(Post, {as: 'posts', foreignKey: 'authorId'});
+    Post.initRels = function () {
+        Post.belongsTo(User, {as: 'author', foreignKey: 'authorId'});
+        User.hasMany(Post, {as: 'posts', foreignKey: 'authorId'});
+    }
 
     return Post;
 }

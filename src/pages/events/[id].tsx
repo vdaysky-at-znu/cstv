@@ -4,7 +4,7 @@ import TeamsTable from '../teams/teamsTable';
 import MatchesTable from '@/components/match/matchesTable';
 import MatchService from '@/services/match';
 import AddMatch from "@/components/admin/AddMatch";
-import {requireAuth} from "@/services/passport";
+import {useAuth} from "@/services/passport";
 import {createRouter} from "next-connect";
 import { GSSPIsAdmin } from '@/services/utils';
 import { IEvent } from '@/database/models/event';

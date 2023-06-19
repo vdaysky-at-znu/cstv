@@ -5,6 +5,7 @@ import {
     Model,
     InferAttributes,
     InferCreationAttributes,
+    BuildOptions,
 } from 'sequelize';
 
 import TeamModelFactory, { ITeam, ITeamType } from "./team";
@@ -520,6 +521,11 @@ export interface IModelContainer {
     Round: IRoundType;
     User: IUserType;
 
+}
+
+export type IModelType<IModel> = typeof Model & IModel & { 
+    new(values?: object, options?: BuildOptions): IModel;
+    initRels(): void;
 }
 
 export default {

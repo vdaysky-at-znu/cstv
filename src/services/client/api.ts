@@ -23,3 +23,24 @@ export async function loadReplies(discussionId: number): Promise<Discussion[]> {
     const { replies } = await response.json();
     return replies;
 }
+
+
+export async function createReply(replyTo: number, content: string, title: string | null = null) {
+
+    const response = await fetch("/api/discussions/create", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            replyTo,
+            content,
+            title
+        })
+    })
+
+    const {discussion} = await response.json()
+
+    return discussion;
+
+}

@@ -34,8 +34,8 @@ export default class UserService extends BaseContext {
         })
     }
     
-    async getUser(id: number) {
-        return await this.di.User.findByPk(id);
+    async getUser(id: number, opts = {}) {
+        return await this.di.User.findByPk(id, opts);
     }
     
     async findUserWithEmailAndPassword(username: string, password: string): Promise<IUser | null> {

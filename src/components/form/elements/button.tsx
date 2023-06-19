@@ -1,22 +1,35 @@
 import Link from "next/link"
 
-export default function Button(props) {
-
-    const className = props.className || "";
-    const variant = props.variant || "default";
-    const block = "block" in props;
-    const dense = "dense" in props;
+export default function Button({
+    children, 
+    className="", 
+    onClick=undefined, 
+    variant="default", 
+    block=false, 
+    dense=false, 
+    href=undefined, 
+    color=undefined, 
+    text=undefined, 
+    disabled=false
+}: {[key: string]: any}) {
 
     const denseSize = variant == "tile" ? " py-3 ": " py-2 ";
     const normalSize = variant == "tile" ? " py-3 ": " py-2 ";
     let bgColor = variant == "flat" ? " ": " bg-green-600 ";
-    const textColor =  props.text || (variant == "outline" ? "text-green-600 " : (variant == "flat" ? " text-black ": " text-white "));
+    const textColor =  text || (variant == "outline" ? "text-green-600 " : (variant == "flat" ? " text-black ": " text-white "));
 
-    if (props.color) { 
-        bgColor = props.color;
+    if (color) { 
+        bgColor = color;
+    }
+    if (disabled) {
+        bgColor = " bg-gray-400 "
+    }
+    
+    if (variant == "outline") {
+        bgColor = ""
     }
 
-    if (props.href) {
+    if (href != null) {
         return <div className={
             (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
             (variant == "tile" ? "border-x border-gray-200 ": " rounded-lg ") +
@@ -24,15 +37,15 @@ export default function Button(props) {
             (block ? "block w-full text-center " : "") +
             " " + className
         }>
-            <Link {...props} className="">
-             { props.children }
+            <Link href={href} className={className}>
+             { children }
             </Link>
         </div> 
     }
 
     return <button 
-            
-            {...props} 
+            disabled={disabled}
+            onClick={onClick}
             className={ 
                 className + 
                 (variant == "outline" ? (bgColor || "border-green-600") + " border-2  " : bgColor) +
@@ -42,6 +55,6 @@ export default function Button(props) {
                 (variant == "tile" ? " ": "rounded-lg ") +
                 textColor
             }>
-            { props.children }
+            { children }
     </button>
 }``

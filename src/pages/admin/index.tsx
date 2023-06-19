@@ -1,6 +1,6 @@
 import {GetServerSideProps} from "next";
 import {createRouter} from "next-connect";
-import {requireAuth} from "@/services/passport";
+import {useAuth} from "@/services/passport";
 import Input from "@/components/form/elements/input";
 import Button from "@/components/form/elements/button";
 import FormTemplate, {FieldType} from "@/components/form/formTemplate";
@@ -66,7 +66,7 @@ export default function AdminPage() {
 }
 
 const router = createRouter()
-    .use(requireAuth())
+    .use(useAuth())
     .get((req: any, res: any) => {
         return req?.user?.role == UserRole.Admin;
     });

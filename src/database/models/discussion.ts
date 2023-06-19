@@ -2,6 +2,7 @@
 import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, HasManyGetAssociationsMixin, HasOneGetAssociationMixin, BelongsToGetAssociationMixin, BuildOptions } from "sequelize";
 import { IUser } from "./user";
+import { IModelType } from ".";
 
 
 export interface DiscussionData {
@@ -25,13 +26,10 @@ export interface IDiscussion extends DiscussionData, Model<InferAttributes<IDisc
     getReplies: HasManyGetAssociationsMixin<IDiscussion>;
 
     loadReplies(): Promise<IDiscussion[]>;
-    loadRepliesRecursive(): Promise<void>;
+    loadRepliesRecursive(): Promise<IDiscussion[]>;
 }
 
-export type IDiscussionType = typeof Model & IDiscussion & {
-    new(values?: object, options?: BuildOptions): IDiscussion;
-    init(): void;
-}
+export type IDiscussionType = IModelType<IDiscussion>;
 
 export default ({User, db}: IContextContainer): IDiscussionType => {
     
@@ -48,25 +46,27 @@ export default ({User, db}: IContextContainer): IDiscussionType => {
         replyToId: DataTypes.INTEGER,
         authorId: DataTypes.INTEGER,
     }, {
-        timestamps: false,
+        timestamps: true,
         freezeTableName: true,
     });
 
-    Discussion.loadReplies = async function() {
+    Discussion.prototype.loadReplies = async function() {
         this.replies = await this.getReplies();
         return this.replies;
     }
 
-    Discussion.loadRepliesRecursive = async function() {
+    Discussion.prototype.loadRepliesRecursive = async function() {
         Promise.all((await this.loadReplies()).map(
             reply => reply.loadRepliesRecursive()
         ))
     }
 
-    Discussion.belongsTo(Discussion, {as: 'replyTo', foreignKey: 'replyToId'});
-    Discussion.hasMany(Discussion, {as: 'replies', foreignKey: 'replyToId'});
-    Discussion.belongsTo(User, {as: 'author', foreignKey: 'authorId'})
-    User.hasMany(Discussion, {as: 'discussions', foreignKey: 'authorId'})
+    Discussion.initRels = function () {
+        Discussion.belongsTo(Discussion, {as: 'replyTo', foreignKey: 'replyToId'});
+        Discussion.hasMany(Discussion, {as: 'replies', foreignKey: 'replyToId'});
+        Discussion.belongsTo(User, {as: 'author', foreignKey: 'authorId'})
+        User.hasMany(Discussion, {as: 'discussions', foreignKey: 'authorId'})
+    }
 
     return Discussion;
 }

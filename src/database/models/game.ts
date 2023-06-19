@@ -5,6 +5,7 @@ import { IMatch } from "./match"
 import { IRound } from "./round";
 import { IPlayerStats } from "./playerStats";
 import container from "@/container";
+import { IModelType } from ".";
 
 
 export interface GameData {
@@ -24,11 +25,8 @@ export interface IGame extends GameData, Model {
     getScore(): Promise<[number, number]>;
 }
 
-export type IGameType = typeof Model & IGame & {
-    new(values?: object, options?: BuildOptions): IGame;
-}
-
-export default ({Team, Round, db}: IContextContainer): IGameType => {
+export type IGameType = IModelType<IGame>
+export default ({Team, Round, Match, db}: IContextContainer): IGameType => {
     
     const Game = <IGameType> db.define("Game", {
         id: {
@@ -44,9 +42,7 @@ export default ({Team, Round, db}: IContextContainer): IGameType => {
         timestamps: false,
     })
 
-    Game.getScore = async function () {
-
-        const Match = container.resolve("Match");
+    Game.prototype.getScore = async function () {
 
         const [score] = await Round.findAll({
             attributes: [
@@ -76,11 +72,12 @@ export default ({Team, Round, db}: IContextContainer): IGameType => {
         ]
     }
 
-    Team.hasMany(Game, {foreignKey: 'winnerId'});
-    Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
-
-    Round.belongsTo(Game, {as: "game", foreignKey: 'gameId'})
-    Game.hasMany(Round, {as: "rounds", foreignKey: 'gameId'})
-
+    Game.initRels = function () {
+        Team.hasMany(Game, {foreignKey: 'winnerId'});
+        Game.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'});
+    
+        Round.belongsTo(Game, {as: "game", foreignKey: 'gameId'})
+        Game.hasMany(Round, {as: "rounds", foreignKey: 'gameId'})
+    }
     return Game;
 }

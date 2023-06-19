@@ -1,6 +1,7 @@
 import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, BuildOptions } from "sequelize";
 import { ITeam } from "./team"
+import { IModelType } from ".";
 
 
 export interface PlayerData {
@@ -18,9 +19,7 @@ export interface IPlayer extends PlayerData, Model {
    
 }
 
-export type IPlayerType = typeof Model & IPlayer & {
-    new(values?: object, options?: BuildOptions): IPlayer;
-}
+export type IPlayerType = IModelType<IPlayer>
 
 export default ({db, Team}: IContextContainer): IPlayerType => {
     
@@ -43,9 +42,11 @@ export default ({db, Team}: IContextContainer): IPlayerType => {
             timestamps: true,
         }
     )
-
-    Player.belongsTo(Team, {as: "team", foreignKey: "teamId"});
-    Team.hasMany(Player, {as: "players", foreignKey: "teamId"});
+    
+    Player.initRels = function () {
+        Player.belongsTo(Team, {as: "team", foreignKey: "teamId"});
+        console.log("Add team.hasmany as players");
+    }
 
     return Player;
 }

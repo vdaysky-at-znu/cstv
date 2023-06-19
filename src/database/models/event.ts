@@ -2,6 +2,7 @@ import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, HasManyGetAssociationsMixin, BuildOptions } from "sequelize";
 import { ITeam } from "./team"
 import { IMatch } from "./match";
+import { IModelType } from ".";
 
 
 export interface EventData {
@@ -22,12 +23,9 @@ export interface IEvent extends EventData, Model {
     loadTeams(): Promise<ITeam[]>;
 }
 
-export type IEventType = typeof Model & IEvent & {
-    new(values?: object, options?: BuildOptions): IEvent;
-};
+export type IEventType = IModelType<IEvent>;
 
-export default ({db, Team, Match}: IContextContainer): IEventType => {
-
+export default ({db, Team}: IContextContainer): IEventType => {
 
     const Event = <IEventType> db.define<IEvent>('Event', {
         id: {
@@ -36,15 +34,17 @@ export default ({db, Team, Match}: IContextContainer): IEventType => {
             primaryKey: true,
         },
         name: DataTypes.STRING,
+        startsAt: DataTypes.TIME,
         winnerId: DataTypes.NUMBER,
         trophyUrl: DataTypes.STRING,
         bannerUrl: DataTypes.STRING,
-        startsAt: DataTypes.TIME,
     }, {
         freezeTableName: true,
     });
 
-    console.log(" ===================== Add relationships on Event");
+    Event.initRels = function () {
+        Event.belongsTo(Team, {as: "winner", foreignKey: "winnerId"})
+    }
 
     Event.prototype.loadTeams = async function () {
         let intersect: {[key: number]: ITeam} = {};
@@ -58,9 +58,6 @@ export default ({db, Team, Match}: IContextContainer): IEventType => {
         }
         return Object.values(intersect);
     }
-
-    Event.belongsTo(Team, {as: "winner", foreignKey: "winnerId"})
-    Team.hasMany(Event, {as: "wonEvents", foreignKey: "winnerId"})
 
     return Event;
 }

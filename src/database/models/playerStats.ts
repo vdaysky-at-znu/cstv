@@ -3,6 +3,7 @@ import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonA
 import { ITeam } from "./team"
 import { IGame } from "./game";
 import { IPlayer } from "./player";
+import { IModelType } from ".";
 
 
 export interface PlayerStatsData {
@@ -23,9 +24,7 @@ export interface IPlayerStats extends PlayerStatsData, Model {
     getPlayer: HasOneGetAssociationMixin<IPlayer>;
 }
 
-export type IPlayerStatsType = typeof Model & IPlayerStats & {
-    new(values?: object, options?: BuildOptions): IPlayerStats;
-}
+export type IPlayerStatsType = IModelType<IPlayerStats>
 
 export default ({Game, Player, db}: IContextContainer): IPlayerStatsType => {
     
@@ -43,12 +42,14 @@ export default ({Game, Player, db}: IContextContainer): IPlayerStatsType => {
         freezeTableName: true,
         timestamps: false,
     });
-
-    Game.hasMany(PlayerStats, {as: "stats", foreignKey: "gameId"});
-    Player.hasMany(PlayerStats, {as: "game", foreignKey: "gameId"});
-
-    PlayerStats.belongsTo(Game, {as: "game", foreignKey: "gameId"});
-    PlayerStats.belongsTo(Player, {as: "player", foreignKey: "playerId"});
+    
+    PlayerStats.initRels = function () {
+        Game.hasMany(PlayerStats, {as: "stats", foreignKey: "gameId"});
+        Player.hasMany(PlayerStats, {as: "game", foreignKey: "gameId"});
+    
+        PlayerStats.belongsTo(Game, {as: "game", foreignKey: "gameId"});
+        PlayerStats.belongsTo(Player, {as: "player", foreignKey: "playerId"});
+    }
 
     return PlayerStats;
 }

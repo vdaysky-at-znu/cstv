@@ -70,11 +70,19 @@ export async function mySession(req: IncomingMessage, res: NextApiResponse, next
 
 /** Middleware that will authenticate user based on stored cookie.
  * User will be available in `request.user` */
-export const requireAuth = () => createRouter<IncomingMessage, NextApiResponse>()
+export const useAuth = () => createRouter<IncomingMessage, NextApiResponse>()
     .use(mySession)
     .use(promisifyMiddleware(passport.initialize()))
     .use(promisifyMiddleware(passport.session()))
     .clone();
+
+export const requireAuth = async (req, res, next) => {
+  if (req.user == null) {
+    res.json({error: true, message: 'user required'});
+    return;
+  }
+  await next();
+}
 
 export const requireRole = (role: UserRole) => createRouter<AuthenticatedApiRequest, NextApiResponse>()
     .use(mySession)

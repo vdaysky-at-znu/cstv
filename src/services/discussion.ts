@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import BaseContext from "@/baseContext";
 import { IUser } from "@/database/models/user";
+import { IDiscussion } from "@/database/models/discussion";
 
 export type CreateDiscussionBody = {
     title: string
@@ -9,7 +10,7 @@ export type CreateDiscussionBody = {
 }
 
 export default class DiscussionService extends BaseContext {
-    async  createDiscussion(author: IUser, data: CreateDiscussionBody) {
+    async createDiscussion(author: IUser, data: CreateDiscussionBody) {
         return await this.di.Discussion.create({
             title: data.title,
             content: data.content,
@@ -32,6 +33,55 @@ export default class DiscussionService extends BaseContext {
      async getDiscussionById(id: number, opts = {}) {
         return await this.di.Discussion.findByPk(id, opts);
     }
+
+    async getDiscussionWithReplyCount(id: number): Promise<null | (IDiscussion & {replyCount: number})> {
+        return await this.getDiscussionById(id, {
+            attributes: [
+                "id", 
+                `title`, 
+                `content`, 
+                `createdAt`, 
+                `updatedAt`, 
+                `replyToId`, 
+                `authorId`, 
+                [Sequelize.fn("count", Sequelize.col("`replies`.`replyToId`")), "replyCount"]
+            ],
+            include: [
+                {
+                    model: this.di.Discussion, 
+                    as: "replies", 
+                    attributes: []
+                },
+                {
+                    model: this.di.User,
+                    as: 'author',
+                    attributes: [
+                        'username'
+                    ],
+                    include: [{
+                        model: this.di.Player,
+                        as: 'player',
+                        attributes: [
+                            'inGameName',
+                            'id'
+                        ]
+                    }]
+                }
+            ],
+            group: [
+                "id", 
+                `title`, 
+                `content`, 
+                `createdAt`, 
+                `updatedAt`, 
+                `replyToId`, 
+                `authorId`, 
+                'username',
+                'inGameName',
+                "author->player.id"
+            ]
+        });
+    }
     
     async getRepliesTo(id: number) {
     
@@ -47,6 +97,20 @@ export default class DiscussionService extends BaseContext {
                 as: "replies", 
                 attributes: [
                 ],
+            }, {
+                model: this.di.User,
+                as: 'author',
+                attributes: [
+                    'username'
+                ],
+                include: [{
+                    model: this.di.Player,
+                    as: 'player',
+                    attributes: [
+                        'inGameName',
+                        'id'
+                    ]
+                }]
             }],
             group: [
                 "id", 
@@ -54,9 +118,10 @@ export default class DiscussionService extends BaseContext {
                 `createdAt`, 
                 `updatedAt`, 
                 `replyToId`, 
-                `authorId`, 
-                `replies.id`, 
-                `replies.content`,
+                `authorId`,
+                'username',
+                'inGameName',
+                "author->player.id"
             ]
         });
     

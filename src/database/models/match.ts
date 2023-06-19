@@ -2,6 +2,8 @@ import { IContextContainer } from "@/baseContext";
 import { Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, DataTypes, HasManyGetAssociationsMixin, HasOneGetAssociationMixin, BelongsToGetAssociationMixin, BuildOptions } from "sequelize";
 import { ITeam } from "./team"
 import { IGame } from "./game";
+import { IModelType } from ".";
+import container from "@/container";
 
 
 export interface MatchData {
@@ -27,14 +29,11 @@ export interface IMatch extends MatchData, Model<InferAttributes<IMatch>, InferC
     getMapCount(): Promise<number>;
 }
 
-export type IMatchType = typeof Model & IMatch & {
-    new(values?: object, options?: BuildOptions): IMatch;
-    init(): void;
-}
+export type IMatchType = IModelType<IMatch>
 
 
 
-export default ({Team, Game, Event, db}: IContextContainer): IMatchType => {
+export default ({Team, Event, db}: IContextContainer): IMatchType => {
     
     const Match = <IMatchType> db.define<IMatch>('Match',  {
         id: {
@@ -70,23 +69,24 @@ export default ({Team, Game, Event, db}: IContextContainer): IMatchType => {
         return (await this.getGames()).length; 
     }
 
-    console.log("Add relationships on Match");
+    Match.initRels = function () {
+        const Game = container.resolve("Game");
+        
+        Team.hasMany(Match, {as: 'matchesAsTeamOne', foreignKey: 'teamAId'});
+        Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
     
-
-    Team.hasMany(Match, {as: 'matchesAsTeamOne', foreignKey: 'teamAId'});
-    Match.belongsTo(Team, {as: 'teamA', foreignKey: 'teamAId'})
-
-    Team.hasMany(Match, {as: 'matchesAsTeamTwo', foreignKey: 'teamBId'});
-    Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
-
-    Team.hasMany(Match, {foreignKey: 'winnerId'});
-    Match.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'})
-
-    Game.belongsTo(Match, {as: "match", foreignKey: 'matchId'});
-    Match.hasMany(Game, {as: "games", foreignKey: 'matchId'});
-
-    Event.hasMany(Match, {as: 'matches', foreignKey: 'eventId'});
-    Match.belongsTo(Event, {as: 'event', foreignKey: 'eventId'});
+        Team.hasMany(Match, {as: 'matchesAsTeamTwo', foreignKey: 'teamBId'});
+        Match.belongsTo(Team, {as: 'teamB', foreignKey: 'teamBId'})
+    
+        Team.hasMany(Match, {foreignKey: 'winnerId'});
+        Match.belongsTo(Team, {as: 'winner', foreignKey: 'winnerId'})
+    
+        Game.belongsTo(Match, {as: "match", foreignKey: 'matchId'});
+        Match.hasMany(Game, {as: "games", foreignKey: 'matchId'});
+    
+        Event.hasMany(Match, {as: 'matches', foreignKey: 'eventId'});
+        Match.belongsTo(Event, {as: 'event', foreignKey: 'eventId'});
+    }
 
     return Match;
 }
