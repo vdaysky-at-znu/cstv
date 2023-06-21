@@ -1,19 +1,18 @@
 import {createRouter} from "next-connect";
 import {AuthenticatedApiRequest, requireRole} from "@/services/passport";
 import {NextApiResponse} from "next";
-import MatchService from "@/services/match";
 import { UserRole } from "@/database/models/user";
 import { getService } from "@/container";
+import StatService from "@/services/stats";
 
 const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
     .use(requireRole(UserRole.Admin))
     .put(async (req, res) => {
-        const service = getService(MatchService);
-        const newMatch = await service.createMatch(req.body);
-        const match = await service.getMatchById(newMatch.id, {
-            include: ['teamA', 'teamB']
-        })
-        res.json({match});
+        const service = getService(StatService);
+        const newStat = await service.createStat(req.body);
+
+        const stat = await service.getStat(newStat.playerId, newStat.gameId);
+        res.json({stat});
     });
 
 export default router.handler({

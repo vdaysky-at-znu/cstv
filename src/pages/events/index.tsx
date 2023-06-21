@@ -4,8 +4,10 @@ import EventCard from "@/components/event";
 import AddMatch from "@/components/admin/AddMatch";
 import FormTemplate, { FieldType } from "@/components/form/formTemplate";
 import { IEvent } from "@/database/models/event";
-import { ITeam } from "@/database/models/team";
+import { ITeam, TeamData } from "@/database/models/team";
 import { getService } from "@/container";
+import { createEvent, createMatch, findTeams } from "@/services/client/api";
+import { useState } from "react";
 
 export const getServerSideProps: GetServerSideProps<{
     events: IEvent[];
@@ -21,6 +23,20 @@ export const getServerSideProps: GetServerSideProps<{
   export default function Page({
     events, eventTeams
   }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    
+    const [reactiveEvents, setEvents] = useState(events);
+
+    async function onCreateEvent(data: {name: string, startsAt: string, winner: TeamData, trophyUrl: string, bannerUrl: string}) {
+      const event = await createEvent(
+        data.name, 
+        data.startsAt, 
+        data.winner.id,
+        data.trophyUrl,
+        data.bannerUrl
+      )
+      setEvents([...reactiveEvents, event]);
+    }
+
     return <div className="mt-10 mx-2">
       <div>
         <FormTemplate
@@ -32,22 +48,40 @@ export const getServerSideProps: GetServerSideProps<{
                     label: "Event Name"
                 },
                 {
+                  type: FieldType.TEXT,
+                  placeholder: "Trophy URL",
+                  name: "trophyUrl",
+                  label: "Trophy URL"
+                },
+                {
+                  type: FieldType.AUTOCOMPLETE,
+                  placeholder: "Winner",
+                  name: "winner",
+                  label: "Event Winner",
+                  source: findTeams,
+                  title: (t) => t.name
+                },
+                {
+                    type: FieldType.TEXT,
+                    placeholder: "Banner URL",
+                    name: "bannerUrl",
+                    label: "Banner URL"
+                },
+                {
                     type: FieldType.DATETIME,
                     placeholder: "Starts At",
                     name: "startsAt",
                     label: "Starts At"
                 }
             ]}
-            onSubmit={(values) => {
-                console.log("submit", values);
-            }}
+            onSubmit={onCreateEvent}
             title={"Create Event"}
             submitText={"Create Event"}
         />
       </div>
       <div>
         { 
-        events.map((event, i) => <div key={i} className="mt-2">
+        reactiveEvents.map((event, i) => <div key={i} className="mt-2">
           <EventCard teams={eventTeams[i]}  event={event} />
         </div> ) 
         }

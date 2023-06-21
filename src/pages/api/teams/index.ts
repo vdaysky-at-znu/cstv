@@ -13,9 +13,16 @@ const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
     // })
     .get(async (req, res) => {
         const service = getService(TeamService);
-        const {name}: {name: string} = req.query;
+        const {name}: {name: string} = req.query as {name: string};
         const teams = await service.getTeams({name});
         res.json({teams});
+    })
+    .put(async (req, res) => {
+        const service = getService(TeamService);
+        console.log("Create tean", req.body);
+        
+        const team = await service.createTeam(req.body);
+        res.json({team});
     });
 
 

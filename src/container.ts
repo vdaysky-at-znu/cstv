@@ -29,20 +29,26 @@ container.register({
 export default container;
 
 //#region model relationship resolution
-const resolvedModels: IModelType<unknown>[] = [];
 
-for (const modelName in models) {
-    const model: IModelType<unknown> = container.resolve(modelName);
-    resolvedModels.push(model);
+Object
+    .keys(models)
+    .map(mName => container.resolve(mName) as IModelType<unknown>)
+    .forEach(m =>  typeof m.initRels === "function" && m.initRels());
 
-}
+// const resolvedModels: IModelType<unknown>[] = [];
 
-for (const resoledModel of resolvedModels) {
-    if (typeof resoledModel.initRels != "function") {
-        throw new Error("Model " + resoledModel.name + " does not have initRels method")
-    }
-    resoledModel.initRels();
-}
+// for (const modelName in models) {
+//     const model: IModelType<unknown> = container.resolve(modelName);
+//     resolvedModels.push(model);
+
+// }
+
+// for (const resoledModel of resolvedModels) {
+//     if (typeof resoledModel.initRels != "function") {
+//         throw new Error("Model " + resoledModel.name + " does not have initRels method")
+//     }
+//     resoledModel.initRels();
+// }
 //#endregion
 
 export function getService<T extends {new(opts: IContextContainer): InstanceType<T>}>(serviceType: T): InstanceType<T> {

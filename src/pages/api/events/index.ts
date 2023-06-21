@@ -9,7 +9,14 @@ const router = createRouter<AuthenticatedApiRequest, NextApiResponse>()
 .use(requireRole(UserRole.Admin))
 .put(async (req, res) => {
     const service = getService(EventService);
-    const event = await service.createEvent(req.body);
+    const newEvent = await service.createEvent({
+        ...req.body,
+        startsAt: new Date(req.body.startsAt)
+    });
+
+    const event = await service.getEventById(newEvent.id, {
+    })
+
     res.json({event});
 })
 .get(async (req, res) => {

@@ -18,13 +18,13 @@ export enum FieldType {
     AUTOCOMPLETE = 'autocomplete',
 }
 
-type FormField<FieldValue> = {
+type FormField<T> = {
     name: string,
     type: FieldType,
     label?: string,
     placeholder?: string,
-    source?: AutoDataSource<any>,
-    title?: (val: FieldValue) => string,
+    source?: AutoDataSource<T>,
+    title?: (val: T) => string,
 }
 
 function FormFieldElement<T>(
@@ -64,6 +64,8 @@ function FormFieldElement<T>(
         return <div className="mt-2">
             <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <AutoInput
+                key={value}
+                selected={value}
                 title={field.title || (() => "no title")}
                 source={field.source || (async () => [])}
                 onSelect={(e) => onValueChange(e)}
@@ -75,6 +77,7 @@ function FormFieldElement<T>(
         return <div className="mt-2">
             <label className="text-lg font-semibold">{field?.label || field.name}</label>
             <SelectInput
+                selected={value}
                 onSelect={(e) => onValueChange(e)}
                 source={field.source || (async () => [])}
                 title={field.title || (() => "no title")}
@@ -93,7 +96,7 @@ export default function FormTemplate(
         title,
         submitText = "Submit",
         onDataChange = () => null,
-    }: {fields: FormField<any>[], title?: string, onSubmit?: (({})=>void), submitText?: string, onDataChange?: (({})=>void)}
+    }: {fields: FormField<any>[], title?: string, onSubmit?: ((data: any)=>any), submitText?: string, onDataChange?: (({})=>void)}
 ) {
 
     const [formState, setFormState] = useState({} as {[key: string]: any});
@@ -105,9 +108,7 @@ export default function FormTemplate(
 
     function submitForm() {
         onSubmit && onSubmit(formState);
-        for (const field of fields) {
-            setFormState({...formState, [field.name]: ""})
-        }
+        setFormState({})
     }
 
     return <div className="py-4 bg-gray-100 px-2 rounded-md shadow-lg">

@@ -5,8 +5,8 @@ import { selectAuthState } from '@/store/authSlice';
 import { useState } from 'react'
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import Input from "@/components/form/input";
-import Button from "@/components/form/button";
+import Input from "@/components/form/elements/input";
+import Button from "@/components/form/elements/button";
 import Link from 'next/link';
 
 export default function AuthForm() {

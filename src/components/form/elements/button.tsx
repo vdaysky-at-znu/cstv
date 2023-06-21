@@ -30,7 +30,7 @@ export default function Button({
     }
 
     if (href != null) {
-        return <div className={
+        return <div onClick={onClick} className={
             (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
             (variant == "tile" ? "border-x border-gray-200 ": " rounded-lg ") +
             (variant == "outline" ? " border-green-600 border-2 text-green-600 " : " ") + 

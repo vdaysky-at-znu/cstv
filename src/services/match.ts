@@ -55,7 +55,7 @@ export default class MatchService extends BaseContext {
                 attributes: [],
                 model: this.di.Match,
                where: {
-                 id: 1, 
+                 id: id, 
                },
                on: Sequelize.literal("`team`.id = `team->Matches`.`teamAId` OR `team`.id = `team->Matches`.`teamBId`") 
               },

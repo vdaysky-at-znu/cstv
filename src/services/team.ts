@@ -1,4 +1,5 @@
 import BaseContext from "@/baseContext";
+import { Op } from "sequelize";
 
 
 
@@ -11,7 +12,9 @@ export default class TeamService extends BaseContext {
             additionalOpts = {
                 ...additionalOpts,
                 where: {
-                    name: opts.name
+                    name: {
+                        [Op.like]: "%%" + opts.name + "%%"
+                    }
                 }
             }
         }
@@ -21,5 +24,13 @@ export default class TeamService extends BaseContext {
     
     async getTeamById(id: number, opts: any = {}) {
         return await this.di.Team.findByPk(id, {...opts})
+    }
+
+    async createTeam({name, rating, logoUrl}: {name: string, rating: number, logoUrl: string}) {
+        console.log("create team", name, rating), logoUrl;
+        
+        return await this.di.Team.create({
+            name, rating, logoUrl
+        });
     }
 }

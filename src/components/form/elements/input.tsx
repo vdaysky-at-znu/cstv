@@ -2,7 +2,7 @@ import DatePicker from "react-datepicker";
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-export default function Input({readonly = false, placeholder = "", type = "", rightIcon = undefined, leftIcon = undefined, color
+export default function Input({onFocus = undefined, onClick=undefined, readonly = false, placeholder = "", type = "", rightIcon = undefined, leftIcon = undefined, color
 , className = undefined, value = undefined, onChange = undefined, innerRef = undefined, block = false}: {[key: string]: any} = {}) {
 
     if (type === "datetime") {
@@ -20,6 +20,9 @@ export default function Input({readonly = false, placeholder = "", type = "", ri
 
     return <div className={block ? "w-full " : "" + "relative"}>
         <input readOnly={readonly} ref={innerRef}
+            value={value}
+            onClick={onClick}
+            onFocus={onFocus}
             onChange={onChange}
             placeholder={placeholder}
             className={

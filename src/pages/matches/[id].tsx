@@ -2,16 +2,22 @@ import FormTemplate, { FieldType } from "@/components/form/formTemplate";
 import GamesTable from "@/components/game/GamesTable";
 import { getService } from "@/container";
 import { IMatch } from "@/database/models/match";
-import { ITeam } from "@/database/models/team";
+import { ITeam, TeamData } from "@/database/models/team";
+import { createGame } from "@/services/client/api";
 import MatchService from "@/services/match";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { useRouter } from "next/router";
 export default function MatchPage({match, score, scores}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    const router = useRouter();
+
+    async function onCreateGame({winner, map}: {winner: TeamData, map: {name: string}}) {
+        console.log("map", map);
+        
+        await createGame(match.id, winner.id, map.name);
+    }
 
     return <div className="mt-10 mx-2">
         <div>
             <FormTemplate 
+                onSubmit={onCreateGame}
                 title="Register Game"
                 fields={[
                 {

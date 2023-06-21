@@ -17,6 +17,8 @@ export interface PlayerStatsData {
     photoUrl: string
     player?: NonAttribute<IPlayer>
     game?: NonAttribute<IGame>
+    playerId: number
+    gameId: number
 }
 
 export interface IPlayerStats extends PlayerStatsData, Model {

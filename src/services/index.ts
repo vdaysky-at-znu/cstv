@@ -7,6 +7,7 @@ import PostService from './post';
 import DiscussionService from './discussion';
 import PlayerService from './player';
 import TeamService from './team';
+import StatService from './stats';
 
 export interface IServicesContainer {
     EventService: EventService
@@ -16,6 +17,7 @@ export interface IServicesContainer {
     DiscussionService: DiscussionService
     PlayerService: PlayerService
     TeamService: TeamService
+    StatService: StatService
 }
 
 export default {
@@ -27,4 +29,5 @@ export default {
     DiscussionService: asClass(DiscussionService).singleton(),
     PlayerService: asClass(PlayerService).singleton(),
     TeamService: asClass(TeamService).singleton(),
+    StatService: asClass(StatService).singleton(),
 };

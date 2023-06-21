@@ -1,4 +1,5 @@
 import {Discussion, Event, Player, Team} from "@/database/models";
+import { PlayerStatsData } from "@/database/models/playerStats";
 
 export async function findEvents(prompt: string): Promise<Event[]> {
     const response = await fetch(`/api/events?name=${prompt}`);
@@ -43,4 +44,86 @@ export async function createReply(replyTo: number, content: string, title: strin
 
     return discussion;
 
+}
+
+export async function createMatch(teamAId: number, teamBId: number, winnerId: number, eventId: number, startsAt: string) {
+
+    const response = await fetch("/api/matches", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            teamAId,
+            teamBId,
+            winnerId,
+            eventId,
+            startsAt
+        })
+    })
+
+    const data = await response.json();
+    return data.match;
+}
+
+export async function createGame(matchId: number, winnerId: number, map: string) {
+    const response = await fetch("/api/games", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            matchId,
+            winnerId,
+            map
+        })
+    })
+    const { game } = await response.json();
+}
+
+export async function createStat(gameId: number, playerId: number, kills: number, deaths: number, assists: number): Promise<PlayerStatsData> {
+    const response = await fetch("/api/stats", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            gameId, playerId, kills, deaths, assists
+        })
+    })
+    const {stat} = await response.json();
+    return stat;
+}
+
+export async function createEvent(
+    name: string,
+    startsAt: string,
+    winnerId: number,
+    trophyUrl: string,
+    bannerUrl: string,
+) {
+    const response = await fetch("/api/events", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name, startsAt, winnerId, trophyUrl, bannerUrl
+        })   
+    })
+
+    const { event } = await response.json();
+
+    return event;
+}
+
+export async function createTeam(name: string, rating: number, logoUrl: string) {
+    const response = await fetch("api/teams", {
+        method: "PUT", headers: {'Content-type': 'application/json'},
+        body: JSON.stringify({
+            name, rating, logoUrl
+        })
+    })
+    const { team } = await response.json();
+    return team;
 }

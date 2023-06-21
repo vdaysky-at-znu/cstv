@@ -99,7 +99,10 @@ export default function DiscussionView({discussion}: {discussion:  DiscussionDat
                 {
                 isExpanded && 
                 <li className="relative ml-5">
-                    <div className="flex justify-between ml-2 mt-2 relative before:border-l before:border-gray-400 before:left-[-23px] before:top-[-8px] before:absolute before:h-[calc(100%+23px)]">
+                    <div className={
+                        "flex justify-between ml-2 mt-2 relative before:border-l before:last:border-0 before:border-gray-400 before:left-[-23px]" +
+                        " before:top-[-8px] before:absolute before:h-[calc(100%+23px)]"
+                    }>
                         <Input readonly={user == null} innerRef={inputRef} className="text-sm" placeholder="Write your reply..." block></Input>
                         
                         <Button disabled={user == null} dense className="ml-1" onClick={() => reply(discussion.id, inputRef?.current?.value)}> 

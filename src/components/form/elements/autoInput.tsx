@@ -16,6 +16,7 @@ type CProps<T> = {
     minLength?: number,
     onSelect: (val: T) => void,
     title: (val: T) => string,
+    selected: T,
 }
 
 type CState<T> = {
@@ -30,13 +31,14 @@ export default class AutoInput<T> extends React.Component<CProps<any>, CState<an
     cRef: React.RefObject<HTMLInputElement>;
 
     constructor(props: CProps<T>) {
+        
         super(props);
         this.cRef = React.createRef();
         this.state = {
             options: [],
             isOpen: false,
-            selectedValue: null,
-            realInputValue: ""
+            selectedValue: props.selected,
+            realInputValue: props.selected ? props.title(props.selected) : ""
         }
     }
 
@@ -63,6 +65,7 @@ export default class AutoInput<T> extends React.Component<CProps<any>, CState<an
     setOpen(isOpen: boolean){
         this.setState({isOpen})
         this.onValueChange(this.state.realInputValue);
+        
     }
 
     selectOption(option: T) {

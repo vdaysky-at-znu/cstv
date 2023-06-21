@@ -11,9 +11,24 @@ import { IEvent } from '@/database/models/event';
 import { ITeam } from '@/database/models/team';
 import { IMatch } from '@/database/models/match';
 import container, { getService } from '@/container';
+import { createMatch } from '@/services/client/api';
+import { useState } from 'react';
 // import { GSSPIsAdmin } from '@/services/utils';
 
 export default function EventPage({event, teams, matches, scores, isAdmin}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  
+  const [reactiveMatches, setMatches] = useState(matches.map(m => (m.event = undefined, m)));
+  const [reactiveTeams, setTeams] = useState(teams);
+  const [reactiveScores, setScores] = useState(scores);
+
+  async function onMatchAdd(match: any) {
+    setMatches([...reactiveMatches, match]);
+    setTeams([...reactiveTeams, ...[match.teamA, match.teamB].filter(
+      team => !reactiveTeams.some(existingTeam => existingTeam.id == team.id)
+    )])
+    setScores([...reactiveScores, [0, 0]])
+  }
+
   return <div>
       <div className='relative mt-0 border-t-2 border-gray-400'>
           <img className='w-full' src={event.bannerUrl}></img>
@@ -23,7 +38,7 @@ export default function EventPage({event, teams, matches, scores, isAdmin}: Infe
 
       {
         isAdmin && <div className="mb-5">
-          <AddMatch event={event} />
+          <AddMatch onMatchAdd={onMatchAdd} event={event} />
         </div>
       }
 
@@ -36,7 +51,7 @@ export default function EventPage({event, teams, matches, scores, isAdmin}: Infe
 
             <div className='py-3'>
               <div className=''>
-                <TeamsTable teams={teams} />
+                <TeamsTable teams={reactiveTeams} />
               </div>
             </div>
           </div>
@@ -44,7 +59,7 @@ export default function EventPage({event, teams, matches, scores, isAdmin}: Infe
           <div className='mt-10 bg-gray-100 border border-gray-400 rounded-lg'>
             <h2 className='text-lg py-3 bg-gray-300 border-b border-gray-400 rounded-t-lg text-center'>Matches</h2>
             <div className='py-3'>
-              <MatchesTable matches={matches} scores={scores} />
+              <MatchesTable matches={reactiveMatches} scores={reactiveScores} />
             </div>
           </div>
         </div>
@@ -66,18 +81,10 @@ export const getServerSideProps: GetServerSideProps<{
   const eventService = getService(EventService);
   const matchService = getService(MatchService);
 
-  const Match = container.resolve("Match");
-
   const event = await eventService.getEventById(parseInt(id), {include: ['matches']});
   const teams = await event?.loadTeams();
-  
-
-  
 
   const matches = await matchService.getMatches({where: {eventId: event?.id}});
-  console.log("Match getScore : ", Match.getScore, " instance, ", matches[0].getScore);
-
-
   const scores = await Promise.all(matches.map(match => match.getScore()));
   
   return {

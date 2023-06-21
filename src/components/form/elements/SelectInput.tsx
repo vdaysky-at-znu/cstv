@@ -7,6 +7,7 @@ type CProps<T> = {
     source: (() => Promise<T[]>),
     title: (val: T) => string,
     onSelect: (val: T) => void,
+    selected: T,
 }
 
 type CState<T> = {
@@ -24,7 +25,7 @@ export default class SelectInput<T> extends React.Component<CProps<T>, CState<T>
         this.state = {
             isOpen: false,
             options: [],
-            selectedValue: null,
+            selectedValue: props.selected,
         }
 
         this.cRef = React.createRef();
@@ -39,6 +40,8 @@ export default class SelectInput<T> extends React.Component<CProps<T>, CState<T>
     }
 
     setOpened(isOpen: boolean) {
+        console.log("Set Open");
+        
         if (isOpen) {
             this.props.source().then((options) => {
                 this.setState({options})

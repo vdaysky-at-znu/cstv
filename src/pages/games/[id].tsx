@@ -2,12 +2,13 @@ import FormTemplate, { FieldType } from "@/components/form/formTemplate";
 import StatsCard from "@/components/game/StatsCard";
 import MatchCard from "@/components/match";
 import container, { getService } from "@/container";
-import { IGame } from "@/database/models/game";
-import { IPlayer } from "@/database/models/player";
-import { findPlayers } from "@/services/client/api";
+import { GameData, IGame } from "@/database/models/game";
+import { IPlayer, PlayerData } from "@/database/models/player";
+import { createStat, findPlayers } from "@/services/client/api";
 import GameService from "@/services/game";
 import MatchService from "@/services/match";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useState } from "react";
 
 function getTeamAWinSkull(roundNumber: number): string {
     if (roundNumber > 15) {
@@ -26,9 +27,18 @@ function getTeamBWinSkull(roundNumber: number) {
 
 export default function GamePage({game, participants, matchScore}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
+    const [stats, setStats] = useState(game?.stats)
+
+    async function onCreateStat(data: {player: PlayerData, kills: number, deaths: number, assists: number}) {
+        const stat = await createStat(game.id, data.player.id, data.kills, data.deaths, data.assists);
+        stats && setStats([...stats, stat]);
+        console.log("Game stats updated", JSON.stringify(game));
+        
+    }
+
     return <div className="mt-10 mx-2">
         <div>
-            <FormTemplate fields={[
+            <FormTemplate onSubmit={onCreateStat} fields={[
                 {
                     type: FieldType.AUTOCOMPLETE,
                     name: "player",
@@ -103,17 +113,17 @@ export default function GamePage({game, participants, matchScore}: InferGetServe
 
         <div className="mt-5">
             <div>
-                <StatsCard stats={game.stats} forTeam={game?.match?.teamA} />
+                <StatsCard stats={stats} forTeam={game?.match?.teamA} />
             </div>
             <div className="mt-2">
-                <StatsCard stats={game.stats} forTeam={game?.match?.teamB} />
+                <StatsCard stats={stats} forTeam={game?.match?.teamB} />
             </div>
         </div>
 
     </div>
 }
 
-export const getServerSideProps: GetServerSideProps<{game: IGame, participants: IPlayer[], matchScore: [number, number]}> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{game: GameData, participants: IPlayer[], matchScore: [number, number]}> = async (ctx) => {
     const { id } = ctx.query;
 
     const gameService = getService(GameService);
@@ -147,7 +157,6 @@ export const getServerSideProps: GetServerSideProps<{game: IGame, participants: 
         });
 
     const participants = await matchService.getParticipantsAtMatch(game?.matchId)
-
     return {
         props: {
             game: JSON.parse(JSON.stringify(game)),

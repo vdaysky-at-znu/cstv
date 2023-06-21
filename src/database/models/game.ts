@@ -3,7 +3,7 @@ import { Model, CreationOptional, NonAttribute, DataTypes, Sequelize, HasOneGetA
 import { ITeam } from "./team"
 import { IMatch } from "./match"
 import { IRound } from "./round";
-import { IPlayerStats } from "./playerStats";
+import { IPlayerStats, PlayerStatsData } from "./playerStats";
 import container from "@/container";
 import { IModelType } from ".";
 
@@ -14,7 +14,7 @@ export interface GameData {
     winnerId?: number
     map: string
     rounds?: NonAttribute<IRound[]>
-    stats?: NonAttribute<IPlayerStats[]>
+    stats?: NonAttribute<PlayerStatsData[]>
     match?: NonAttribute<IMatch>
 }
 
