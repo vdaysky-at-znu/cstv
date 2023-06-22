@@ -24,9 +24,9 @@ export default function Navbar() {
     }
 
     function AuthButton () {
-        return <div className="w-full">
+        return <div className="max-w-[200px] flex justify-end">
             { user ?
-                <Button onClick={logout} className="bg-green-500 text-white bg-red-600" variant="tile" href="/users/register" block dense >
+                <Button onClick={logout} className="bg-green-500 text-white bg-red-600 sm:max-w-[100px]" variant="tile" href="/users/register" block dense >
                     <FontAwesomeIcon icon={faSignOut} />
                 </Button> :
                 <Button className="bg-green-500 text-white" variant="tile" href="/users/login" dense block>
@@ -44,20 +44,29 @@ export default function Navbar() {
         </div>
         <div className="flex">
             <div className={router.route == "/matches" ? "border-b-2 border-green-500" : ""}>
-                <Button href="/matches" variant="tile" dense >
-                    Matches
-                </Button>
+                <div>
+                    <Button href="/matches"  className="lg:min-w-[200px]" variant="tile" block dense >
+                        Matches
+                    </Button>
+                </div>
+                
             </div>
             <div className={router.route == "/events" ? "border-b-2 border-green-500" : ""}>
-                <Button href="/events" variant="tile" dense>
-                    Events
-                </Button>
+                <div>
+                    <Button block className="lg:min-w-[200px]" href="/events" variant="tile" dense>
+                        Events
+                    </Button>
+                </div>
+                
             </div>
            
             <div className={router.route == "/teams" ? "border-b-2 border-green-500" : ""}>
-                <Button href="/teams" variant="tile" dense>
-                    Teams
-                </Button>
+                <div>
+                    <Button block  className="lg:min-w-[200px]" href="/teams" variant="tile" dense>
+                        Teams
+                    </Button>
+                </div>
+                
             </div>
             
         </div>

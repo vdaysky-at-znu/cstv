@@ -6,12 +6,17 @@ import { ITeam, TeamData } from "@/database/models/team";
 import { createGame } from "@/services/client/api";
 import MatchService from "@/services/match";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { useState } from "react";
 export default function MatchPage({match, score, scores}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
+    const [games, setGames] = useState(match.games || []);
+    const [reactiveScores, setScores] = useState(scores);
+
     async function onCreateGame({winner, map}: {winner: TeamData, map: {name: string}}) {
-        console.log("map", map);
         
-        await createGame(match.id, winner.id, map.name);
+        const game = await createGame(match.id, winner.id, map.name);
+        setGames([...games, game])
+        setScores([...reactiveScores, [0, 0]]);
     }
 
     return <div className="mt-10 mx-2">
@@ -58,9 +63,12 @@ export default function MatchPage({match, score, scores}: InferGetServerSideProp
                 <span className="text-gray-700"> {score[1]} </span> 
                 <span className="text-blue-800"> {match?.teamB?.name} </span>
             </h1>
-            <div>
-                <GamesTable games={match?.games || []} scores={scores} />
+            <div className="sm:flex sm:justify-center">
+                <div className="sm:w-[300px]">
+                    <GamesTable games={games} scores={reactiveScores} />
+                </div>
             </div>
+            
         </div>
     </div>
 }

@@ -20,8 +20,10 @@ export default function DiscussionPage({ discussion }: InferGetServerSidePropsTy
         dispatch(addComment(discussion))
     }
 
-    return <div className="mx-2 mt-10 bg-gray-100 px-2 py-5 rounded-lg">
-        {reactiveDiscussion && <DiscussionView discussion={reactiveDiscussion} /> }
+    return <div className="mx-2 mt-10 lg:flex lg:justify-center">
+        <div className=" max-w-[1000px] w-full bg-gray-100 px-2 py-5 rounded-lg">
+            {reactiveDiscussion && <DiscussionView discussion={reactiveDiscussion} /> }
+        </div>
     </div>
 }
 

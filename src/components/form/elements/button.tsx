@@ -30,17 +30,15 @@ export default function Button({
     }
 
     if (href != null) {
-        return <div onClick={onClick} className={
+        return <Link href={href} onClick={onClick} className={
             (dense ? "px-4 " + denseSize : "px-8 " + normalSize) +
             (variant == "tile" ? "border-x border-gray-200 ": " rounded-lg ") +
             (variant == "outline" ? " border-green-600 border-2 text-green-600 " : " ") + 
             (block ? "block w-full text-center " : "") +
-            " " + className
-        }>
-            <Link href={href} className={className}>
+            " " + className }
+            >
              { children }
-            </Link>
-        </div> 
+        </Link>
     }
 
     return <button 

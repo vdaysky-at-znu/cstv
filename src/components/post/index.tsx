@@ -16,7 +16,7 @@ export default function PostCard({post}: {post: Post}) {
     
     return <div className="bg-gray-100 py-4 px-5 rounded-lg border-b-4 border-green-600">
         <div className="flex justify-between">
-            <h1 className="text-blue-800 font-bold"><Link href={"/posts/" + post.id}>{ post.title }</Link></h1>
+            <h1 className="text-blue-800 lg:text-lg font-bold"><Link href={"/posts/" + post.id}>{ post.title }</Link></h1>
             <div>
                 <p className="text-xs">{ daysAgo } days ago</p>
                 <p className="text-xs">author: {post?.author?.username}</p>

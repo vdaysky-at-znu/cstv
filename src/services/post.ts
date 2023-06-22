@@ -7,9 +7,10 @@ type PostBody = {
 }
 
 export default class PostService extends BaseContext {
-     async  getPosts(options: {[key: string]: any}) {
+     async  getPosts(options: {[key: string]: any} = {}) {
         return await this.di.Post.findAll({
             order: [['createdAt', 'DESC']],
+            include: ['author'],
             ...options
         })
     }

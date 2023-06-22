@@ -79,6 +79,8 @@ export async function createGame(matchId: number, winnerId: number, map: string)
         })
     })
     const { game } = await response.json();
+
+    return game;
 }
 
 export async function createStat(gameId: number, playerId: number, kills: number, deaths: number, assists: number): Promise<PlayerStatsData> {
@@ -126,4 +128,21 @@ export async function createTeam(name: string, rating: number, logoUrl: string) 
     })
     const { team } = await response.json();
     return team;
+}
+
+export async function saveRounds(gameId: number, data: {number: number, winnerId: number}[]) {
+    const response = await fetch("/api/games/rounds", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            gameId,
+            rounds: data
+        })
+    })
+
+    const { rounds } = await response.json();
+
+    return rounds;
 }

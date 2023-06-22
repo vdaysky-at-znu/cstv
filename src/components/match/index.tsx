@@ -1,21 +1,20 @@
-import { Match } from "@/database/models";
+import { MatchData } from "@/database/models/match";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-export default function MatchCard({tile=false, match, score}: {match: Match, score: number[], tile: boolean}) {
+export default function MatchCard({tile=false, match, score}: {match: MatchData, score: number[], tile: boolean}) {
     const teamAWon = match?.winnerId == match?.teamA?.id
     const router = useRouter();
     
     return <div 
-                className={(tile ? "border border-gray-300 " : " ") + "text-sm bg-gray-100"} 
+                className={(tile ? "border border-gray-300 " : " ") + "text-sm lg:text-lg bg-gray-100"} 
                 onClick={() => router.push("/matches/" + match.id)}
             >
                 <div className=" py-3 px-5">
                     <div className="flex justify-between">
-                    <div></div>
                     {/* Match as one line */}
                     { 
-                        !match?.event?.name && <div className="flex">
+                        !match?.event?.name && <div className="flex w-full justify-center">
                             <div className="flex"> 
                                 <Link href={"/teams/" + match.teamAId} className="font-semibold">
                                     <span>{match.teamA?.name}</span>
@@ -74,7 +73,6 @@ export default function MatchCard({tile=false, match, score}: {match: Match, sco
                         </Link>
                     </div>
                     }
-                    <div></div>
                 </div>
             </div>
         </div>

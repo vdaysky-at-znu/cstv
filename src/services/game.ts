@@ -24,4 +24,13 @@ export default class GameService extends BaseContext {
      async  getGameById(id: number, opts: {[key: string]: any}) {
         return await this.di.Game.findByPk(id, opts);
     }
+
+    async createRounds({gameId, rounds}: {gameId: number, rounds: {number: number, winnerId: number, gameId: number}[]}) {
+        const data = rounds.map(
+            r => (r.gameId = gameId, r)
+        );
+        return await this.di.Round.bulkCreate(
+            data
+        )
+    }
 }

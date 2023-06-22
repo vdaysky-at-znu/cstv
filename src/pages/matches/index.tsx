@@ -20,8 +20,10 @@ export const getServerSideProps: GetServerSideProps<{
 export default function Page({
     matches, scores
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-        
-    return <div className="mt-10 mx-2">
-        <MatchesTable matches={matches} scores={scores} />
-    </div> 
+    
+    return <div className="md:flex md:justify-center">
+        <div className="mt-2 md:w-5/6">
+            <MatchesTable matches={matches} scores={scores} />
+        </div>
+    </div>
 }

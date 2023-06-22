@@ -42,9 +42,9 @@ export default function EventPage({event, teams, matches, scores, isAdmin}: Infe
         </div>
       }
 
-      <div>
+      <div className='sm:flex sm:flex-col sm:items-center'>
       
-        <div className='mt-10'>
+        <div className='sm:max-w-[500px] mt-10'>
           <div className='bg-gray-100 border border-gray-400 rounded-lg'>
 
             <h2 className='text-lg py-2 rounded-t-lg bg-gray-300 text-center border-b border-gray-400'>Teams</h2>
@@ -56,8 +56,8 @@ export default function EventPage({event, teams, matches, scores, isAdmin}: Infe
             </div>
           </div>
 
-          <div className='mt-10 bg-gray-100 border border-gray-400 rounded-lg'>
-            <h2 className='text-lg py-3 bg-gray-300 border-b border-gray-400 rounded-t-lg text-center'>Matches</h2>
+          <div className='sm:max-w-[500px] mt-10 bg-gray-100 border border-gray-400 rounded-lg'>
+            <h2 className='text-lg py-2 bg-gray-300 border-b border-gray-400 rounded-t-lg text-center'>Matches</h2>
             <div className='py-3'>
               <MatchesTable matches={reactiveMatches} scores={reactiveScores} />
             </div>

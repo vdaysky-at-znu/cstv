@@ -14,40 +14,43 @@ export default function PlayerPage({player}: InferGetServerSidePropsType<typeof 
             <span>#1</span>
         </div>
 
-        <div className="py-2 px-5">
-            <div className="w-full">
-                <div className="bg-gray-200 p-2 rounded-lg border border-gray-300">
-                    <div className="relative">
-                        <img className="relative z-10" src={player.photoUrl}></img>
-                        <img className="absolute opacity-50 top-0" src={player?.team?.logoUrl}></img>
+        <div className="sm:flex">
+            <div className="py-2 px-5 max-w-sm">
+                <div className="w-full">
+                    <div className="bg-gray-200 p-2 rounded-lg border border-gray-300">
+                        <div className="relative flex justify-center">
+                            <img className="relative z-10" src={player.photoUrl}></img>
+                            <img className="absolute opacity-50 max-w-full max-h-full top-0" src={player?.team?.logoUrl}></img>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div className="px-5 pb-4">
-            <table className="w-full mt-5">
-                <tbody>
-                    <tr>
-                        <td className="font-semibold text-gray-700">Age</td>
-                        <td className="text-right">32 years</td>
-                    </tr>
-                    <tr>
-                        <td className="font-semibold text-gray-700">Ranking</td>
-                        <td className="text-right">#1</td>
-                    </tr>
-                    <tr>
-                        <td className="font-semibold text-gray-700">Team</td>
-                        <td className="text-right">
-                            <Link href={"/teams/" + player.teamId} className="font-bold text-blue-800">
-                                <img className="w-6 pe-1 inline" src={player.team?.logoUrl}></img>
-                                {player?.team?.name}
-                            </Link>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className="px-5 pb-4">
+                <table className="w-full mt-5">
+                    <tbody>
+                        <tr className="sm:flex sm:flex-col">
+                            <td className="font-semibold text-gray-700">Age</td>
+                            <td className="text-right sm:text-left">32 years</td>
+                        </tr>
+                        <tr className="sm:flex sm:flex-col">
+                            <td className="font-semibold text-gray-700  sm:mt-4">Ranking</td>
+                            <td className="text-right sm:text-left">#1</td>
+                        </tr>
+                        <tr className="sm:flex sm:flex-col">
+                            <td className="font-semibold text-gray-700 sm:mt-4">Team</td>
+                            <td className="text-right sm:text-left">
+                                <Link href={"/teams/" + player.teamId} className="font-bold text-blue-800">
+                                    <img className="w-6 pe-1 inline" src={player.team?.logoUrl}></img>
+                                    {player?.team?.name}
+                                </Link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        
     </div>
 }
 

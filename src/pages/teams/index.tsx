@@ -27,7 +27,7 @@ export default function Page({
     }
 
 
-    return <div className="px-2 mt-10">
+    return <div className="px-2 mt-10 lg:flex">
         <div>
             <FormTemplate onSubmit={onTeamCreate} submitText="Register" title="Register Team" fields={[
                 {
@@ -44,9 +44,12 @@ export default function Page({
                 }
             ]} />
         </div>
-        <div className="mt-2">
-            <TeamsTable teams={reactiveTeams} />
+        <div className="md:flex md:justify-center lg:w-full">
+            <div className="mt-2 md:w-5/6">
+                <TeamsTable teams={reactiveTeams} />
+            </div>
         </div>
+       
         
     </div> 
 }

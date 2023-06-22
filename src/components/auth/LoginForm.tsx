@@ -44,9 +44,9 @@ export default function AuthForm() {
     const user = useSelector(selectAuthState);
 
     return <div>
-        <div className='text-center'>
+        <div className='text-center flex justify-center'>
             <div>
-                <div className='mx-5 rounded-lg bg-gray-100 pt-10 pb-1 px-3'>
+                <div className='mx-5 max-w-[1000px] rounded-lg bg-gray-100 pt-10 pb-1 px-3'>
                     <div>
                         <div className='mb-2'>
                             <Input 

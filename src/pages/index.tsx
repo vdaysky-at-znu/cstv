@@ -45,57 +45,68 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
       dispatch(createComment(null, text, title));
    }
 
-   return <div className="mt-10 mx-2">
+   return <div className="mt-10 mx-2 sm:flex sm:justify-between">
       
-      <div>
-         <h1 className="text-xl ml-5">Top Teams</h1>
-         <div className="mt-2">
-            <TeamsTable teams={teams} />
+      <div className="lg:w-2/3 lg:me-5 lg:flex">
+         <div className="lg:me-3 lg:w-1/2">
+            <div className="sm:w-96 lg:w-full">
+               <h1 className="text-xl ml-5">Top Teams</h1>
+               <div className="mt-2 sm:h-[300px] lg:h-auto">
+                  <TeamsTable teams={teams} />
+               </div>
+            </div>
             <div className="mt-2">
                <Button href="/teams" block dense variant="outline">See full ranking</Button>
             </div>
          </div>
-      </div>
 
-      <div className="mt-10">
-         <h1 className="text-xl ml-5">Latest News</h1>
-         <div>
-            {posts.map((post, i) => <div className="mt-2 shadow-lg"><PostCard post={post} key={i} /></div>)}
-         </div>
-         <div className="mt-2">
-            <Button href="/posts" block dense variant="outline">See All Posts</Button>
-         </div>
-         
-      </div>
-      <div>
-         <div className="mt-10">
-            <h1 className="text-xl ml-5">Latest Discussions</h1>
-            <div>
-               {
-                  ractiveDiscussions.map(
-                     (discussion, i) => <div className="mt-2 shadow-lg">
-                        <DiscussionCard key={i} discussion={discussion}></DiscussionCard>
-                     </div>
-                  )
-               }
+         <div className="mt-10 sm:mt-2 sm:w-96 lg:w-full">
+            <h1 className="text-xl ml-5">Latest News</h1>
+            <div className="sm:h-[200px] lg:h-auto overflow-y-scroll">
+               {posts.map((post, i) => <div className="mt-2 shadow-lg"><PostCard post={post} key={i} /></div>)}
             </div>
-         </div>
-         <div className="mt-2">
-            <Button href="/discussions" block dense variant="outline">See All Discussions</Button>
+            <div className="mt-2">
+               <Button href="/posts" block dense variant="outline">See All Posts</Button>
+            </div>
+            
          </div>
       </div>
       
-      { 
-         isAuthenticated && <div>
-            <h2 className="text-lg mt-5 font-thin text-center">Write something</h2>
-            <Input innerRef={titleRef} block color="bg-white" placeholder="Discussion Title" />
-            <div className="mt-2">
-               <TextArea innerRef={contentRef} placeholder="Discussion Text" />
+
+      <div className="lg:w-1/3">
+         <div className="sm:w-56 md:w-72 lg:w-full">
+            <div className="mt-10 sm:mt-0">
+               <h1 className="text-xl ml-5">Latest Discussions</h1>
+               <div className="mt-2 overflow-y-scroll sm:h-[300px]">
+                  {
+                     ractiveDiscussions.map(
+                        (discussion, i) => <div className="shadow-sm">
+                           <DiscussionCard key={i} discussion={discussion}></DiscussionCard>
+                        </div>
+                     )
+                  }
+               </div>
             </div>
-            
-            <Button block onClick={postDiscussion} variant="outline"> Post </Button>
-         </div> 
-      }
+            <div>
+               <Button href="/discussions" className="mt-2" block dense variant="outline">See All Discussions</Button>
+            </div>
+         </div>
+         
+         { 
+            isAuthenticated && <div className="mt-2 sm:w-56 md:w-72 lg:w-full">
+               <h2 className="text-lg mt-5 sm:mt-0 font-thin text-center">Write something</h2>
+               <div className="sm:h-[200px] mt-2">
+                  <Input innerRef={titleRef} block color="bg-white" placeholder="Discussion Title" />
+                  <div className="mt-2">
+                     <TextArea innerRef={contentRef} placeholder="Discussion Text" />
+                  </div>
+               </div>
+               
+               
+               <Button block onClick={postDiscussion} variant="outline"> Post </Button>
+            </div> 
+         }
+      </div>
       
    </div>
 }
@@ -112,8 +123,8 @@ export const getServerSideProps: GetServerSideProps<{
    const discussionService = getService(DiscussionService);
    const teamService = getService(TeamService);
 
-   const posts = await postService.getPosts({limit: 10, include: {association: "author" }});
-   const discussions = await discussionService.getRootDiscussions({limit: 10, include: {association: "author"}})
+   const posts = await postService.getPosts({limit: 5, include: {association: "author" }});
+   const discussions = await discussionService.getRootDiscussions({limit: 5, include: {association: "author"}})
    const teams = await teamService.getTeams();
 
    return {

@@ -8,6 +8,8 @@ import { ITeam, TeamData } from "@/database/models/team";
 import { getService } from "@/container";
 import { createEvent, createMatch, findTeams } from "@/services/client/api";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectAuthState } from "@/store/authSlice";
 
 export const getServerSideProps: GetServerSideProps<{
     events: IEvent[];
@@ -25,6 +27,7 @@ export const getServerSideProps: GetServerSideProps<{
   }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     
     const [reactiveEvents, setEvents] = useState(events);
+    const user = useSelector(selectAuthState);
 
     async function onCreateEvent(data: {name: string, startsAt: string, winner: TeamData, trophyUrl: string, bannerUrl: string}) {
       const event = await createEvent(
@@ -37,9 +40,9 @@ export const getServerSideProps: GetServerSideProps<{
       setEvents([...reactiveEvents, event]);
     }
 
-    return <div className="mt-10 mx-2">
+    return <div className="mt-10 mx-2 lg:flex">
       <div>
-        <FormTemplate
+        { user?.role == 20 && <FormTemplate
             fields={[
                 {
                     type: FieldType.TEXT,
@@ -78,13 +81,17 @@ export const getServerSideProps: GetServerSideProps<{
             title={"Create Event"}
             submitText={"Create Event"}
         />
+      }
       </div>
-      <div>
-        { 
-        reactiveEvents.map((event, i) => <div key={i} className="mt-2">
-          <EventCard teams={eventTeams[i]}  event={event} />
-        </div> ) 
-        }
+      <div className="md:flex md:justify-center lg:w-full">
+            <div className="mt-2 lg:mt-0 md:w-5/6">
+            { 
+            reactiveEvents.map((event, i) => <div key={i} className="mt-2">
+              <EventCard teams={eventTeams[i]}  event={event} />
+            </div> ) 
+            }
+          </div>
       </div>
+      
     </div> 
   }

@@ -111,23 +111,24 @@ export default function FormTemplate(
         setFormState({})
     }
 
-    return <div className="py-4 bg-gray-100 px-2 rounded-md shadow-lg">
-        <h1 className="text-xl font-semibold">{title}</h1>
-        <div className="mt-8">
-            {fields.map((field, i) => {
-                return <FormFieldElement
-                    key={field.name}
-                    field={field}
-                    value={formState[field.name] || ""}
-                    onValueChange={(value: any) => {
-                        updateOwnAndParentState(field, value)
-                    }
-                    }/>
-            })}
-        </div>
-        <div className="mt-8">
-            <Button block onClick={submitForm}> {submitText} </Button>
+    return <div className="flex justify-center">
+        <div className="py-4 bg-gray-100 px-2 lg:px-6 rounded-md shadow-lg max-w-[1000px]">
+            <h1 className="text-xl font-semibold">{title}</h1>
+            <div className="mt-8">
+                {fields.map((field, i) => {
+                    return <FormFieldElement
+                        key={field.name}
+                        field={field}
+                        value={formState[field.name] || ""}
+                        onValueChange={(value: any) => {
+                            updateOwnAndParentState(field, value)
+                        }
+                        }/>
+                })}
+            </div>
+            <div className="mt-8">
+                <Button block onClick={submitForm}> {submitText} </Button>
+            </div>
         </div>
     </div>
-
 }
