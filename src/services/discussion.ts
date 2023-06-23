@@ -27,7 +27,56 @@ export default class DiscussionService extends BaseContext {
     }
     
      async getRootDiscussions(opts: {[key: string]: any}) {
-        return await this.getDiscussions({where: {replyToId: null}, ...opts});
+        return await this.di.Discussion.findAll({
+            where: {
+                replyToId: null
+            }, 
+            attributes: [
+                "id", 
+                `title`, 
+                `content`, 
+                `createdAt`, 
+                `updatedAt`, 
+                `replyToId`, 
+                `authorId`, 
+                [Sequelize.fn("count", Sequelize.col("`replies`.`replyToId`")), "replyCount"]
+            ],
+            include: [
+                {
+                    model: this.di.Discussion, 
+                    as: "replies", 
+                    attributes: []
+                },
+                {
+                    model: this.di.User,
+                    as: 'author',
+                    attributes: [
+                        'username'
+                    ],
+                    include: [{
+                        model: this.di.Player,
+                        as: 'player',
+                        attributes: [
+                            'inGameName',
+                            'id'
+                        ]
+                    }]
+                }
+            ],
+            group: [
+                "id", 
+                `title`, 
+                `content`, 
+                `createdAt`, 
+                `updatedAt`, 
+                `replyToId`, 
+                `authorId`, 
+                'username',
+                'inGameName',
+                "author->player.id"
+            ],
+            ...opts
+        });
     }
     
      async getDiscussionById(id: number, opts = {}) {
@@ -83,14 +132,14 @@ export default class DiscussionService extends BaseContext {
         });
     }
     
-    async getRepliesTo(id: number) {
+    async getRepliesTo(id: number | null) {
     
         const discussion = await  this.di.Discussion.findAll({
             where: {
                 replyToId: id
             },
             attributes: [
-                "id", "content", "createdAt", "updatedAt", "replyToId", "authorId", [Sequelize.fn("count", Sequelize.col("`replies`.`replyToId`")), "replyCount"]
+                "id", "title", "content", "createdAt", "updatedAt", "replyToId", "authorId", [Sequelize.fn("count", Sequelize.col("`replies`.`replyToId`")), "replyCount"]
             ],
             include: [{
                 model: this.di.Discussion, 
@@ -115,6 +164,7 @@ export default class DiscussionService extends BaseContext {
             group: [
                 "id", 
                 `content`, 
+                'title',
                 `createdAt`, 
                 `updatedAt`, 
                 `replyToId`, 

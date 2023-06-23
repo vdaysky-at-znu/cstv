@@ -47,7 +47,7 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
 
    return <div className="mt-10 mx-2 sm:flex sm:justify-between">
       
-      <div className="lg:w-2/3 lg:me-5 lg:flex">
+      <div className="lg:w-4/5 lg:me-5 lg:flex">
          <div className="lg:me-3 lg:w-1/2">
             <div className="sm:w-96 lg:w-full">
                <h1 className="text-xl ml-5">Top Teams</h1>
@@ -60,10 +60,10 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
             </div>
          </div>
 
-         <div className="mt-10 sm:mt-2 sm:w-96 lg:w-full">
+         <div className="mt-10 sm:mt-2 sm:w-96 lg:w-1/2">
             <h1 className="text-xl ml-5">Latest News</h1>
             <div className="sm:h-[200px] lg:h-auto overflow-y-scroll">
-               {posts.map((post, i) => <div className="mt-2 shadow-lg"><PostCard post={post} key={i} /></div>)}
+               {posts.map((post, i) => <div className="shadow-lg"><PostCard post={post} key={i} /></div>)}
             </div>
             <div className="mt-2">
                <Button href="/posts" block dense variant="outline">See All Posts</Button>
@@ -73,7 +73,7 @@ export default function Home({posts, discussions, teams, isAuthenticated}: Infer
       </div>
       
 
-      <div className="lg:w-1/3">
+      <div className="lg:w-1/5">
          <div className="sm:w-56 md:w-72 lg:w-full">
             <div className="mt-10 sm:mt-0">
                <h1 className="text-xl ml-5">Latest Discussions</h1>
@@ -124,8 +124,8 @@ export const getServerSideProps: GetServerSideProps<{
    const teamService = getService(TeamService);
 
    const posts = await postService.getPosts({limit: 5, include: {association: "author" }});
-   const discussions = await discussionService.getRootDiscussions({limit: 5, include: {association: "author"}})
-   const teams = await teamService.getTeams();
+   const discussions = await discussionService.getRepliesTo(null);
+   const teams = await teamService.getTeams({}, {order: [['rating', 'desc']]});
 
    return {
       props: {

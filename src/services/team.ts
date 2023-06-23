@@ -4,9 +4,9 @@ import { Op } from "sequelize";
 
 
 export default class TeamService extends BaseContext {
-    async getTeams(opts: {name?: string} = {}) {
+    async getTeams(opts: {name?: string} = {}, otherOpts: {[key: string]: any} = {}) {
 
-        let additionalOpts = {};
+        let additionalOpts = {...otherOpts};
     
         if (opts.name) {
             additionalOpts = {

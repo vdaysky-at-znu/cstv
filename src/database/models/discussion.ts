@@ -11,7 +11,7 @@ export interface DiscussionData {
     content: string
     createdAt: CreationOptional<Date>
     updatedAt: CreationOptional<Date>
-    replyToId?: number
+    replyToId?: number | null
     authorId: number
     author?: NonAttribute<IUser>
     replyCount: NonAttribute<number>

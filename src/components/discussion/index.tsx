@@ -13,13 +13,20 @@ export default function DiscussionCard({discussion}: {discussion: DiscussionData
         }
     )
     
-    return  <div className="bg-gray-200 py-4 px-5 border border-gray-400 ">
-    <div className="flex justify-between">
-        <h1 className="text-blue-800 font-bold text-xs lg:text-sm"><Link href={"/discussions/" + discussion.id}>{ discussion.title }</Link></h1>
-        <div>
-            <p className="text-xs text-gray-500">{ daysAgo } days ago</p>
-            <p className="text-xs text-gray-500">{discussion?.author?.username}</p>
+    return <div className="bg-gray-100 py-4 px-5 border border-gray-200 ">
+        <div className="">
+            <div className="text-blue-800 flex justify-between font-bold text-xs lg:text-xs">
+                <Link className="whitespace-nowrap text-ellipsis overflow-hidden" href={"/discussions/" + discussion.id}>
+                    { discussion.title }
+                
+                </Link>
+                <span className="text-gray-500"> ({discussion.replyCount}) </span>
+            </div>
+            <div className="flex">
+                <span className="py-1 text-xs text-gray-500">{ daysAgo } days ago</span>
+                <span className="px-1 py-1 text-xs text-gray-500">&bull;</span>
+                <span className="py-1 text-xs text-gray-500">{discussion?.author?.username}</span>
+            </div>
         </div>
     </div>
-</div>
 }

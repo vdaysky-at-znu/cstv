@@ -12,11 +12,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <div className="h-screen">
-        <Navbar />
-        <div>
-            { children }
+  return <div className="min-h-screen">
+        <div className="flex justify-center bg-gray-100">
+          <div className="w-full max-w-[1000px]">
+            <Navbar />
+          </div>
         </div>
+        <div className="flex flex-col items-center">
+          <div className="w-full max-w-[1000px] bg-gray-200  h-[calc(100%-48px)] pb-20">
+              <div>
+                { children }
+              </div>
+          </div>
+          {/* <footer className="w-full pt-32">
+            <div className="bg-gray-700 py-7">
+            </div>
+            <div className="bg-gray-500 py-32">
+
+            </div>
+          </footer> */}
+        </div>
+        
   </div>
 
 }

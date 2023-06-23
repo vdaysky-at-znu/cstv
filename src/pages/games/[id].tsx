@@ -8,8 +8,10 @@ import { IPlayer, PlayerData } from "@/database/models/player";
 import { createStat, findPlayers, saveRounds } from "@/services/client/api";
 import GameService from "@/services/game";
 import MatchService from "@/services/match";
+import { selectAuthState } from "@/store/authSlice";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 function getTeamAWinSkull(roundNumber: number): string {
     if (roundNumber > 15) {
@@ -37,7 +39,7 @@ export default function GamePage({game, participants, matchScore}: InferGetServe
     }
 
     const [reactiveGame, setGame] = useState(game);
-
+    const user = useSelector(selectAuthState);
     async function onSaveRounds() { 
         const rounds = teamAWon.filter(aWon => aWon !== null).map(
             (aWon, i) => ({
@@ -52,26 +54,29 @@ export default function GamePage({game, participants, matchScore}: InferGetServe
 
     return <div className="mt-10 mx-2">
         <div>
-            <FormTemplate onSubmit={onCreateStat} fields={[
-                {
-                    type: FieldType.AUTOCOMPLETE,
-                    name: "player",
-                    source: async (prompt: string, limit: number) => participants.filter(x => x.inGameName.toLowerCase().includes(prompt.toLowerCase())).slice(0, limit),
-                    title: (player: IPlayer) => player.inGameName + " | " + player?.team?.name,
-                },
-                {
-                    type: FieldType.TEXT,
-                    name: "kills"
-                }, 
-                {
-                    type: FieldType.TEXT,
-                    name: "deaths"
-                },
-                {
-                    type: FieldType.TEXT,
-                    name: "assists"
-                },
-            ]} />
+            {
+                user?.role === 20 && <FormTemplate onSubmit={onCreateStat} fields={[
+                    {
+                        type: FieldType.AUTOCOMPLETE,
+                        name: "player",
+                        source: async (prompt: string, limit: number) => participants.filter(x => x.inGameName.toLowerCase().includes(prompt.toLowerCase())).slice(0, limit),
+                        title: (player: IPlayer) => player.inGameName + " | " + player?.team?.name,
+                    },
+                    {
+                        type: FieldType.TEXT,
+                        name: "kills"
+                    }, 
+                    {
+                        type: FieldType.TEXT,
+                        name: "deaths"
+                    },
+                    {
+                        type: FieldType.TEXT,
+                        name: "assists"
+                    },
+                ]} />
+            }
+            
         </div>
         
 

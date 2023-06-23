@@ -5,14 +5,19 @@ import { IMatch } from "@/database/models/match";
 import { ITeam, TeamData } from "@/database/models/team";
 import { createGame } from "@/services/client/api";
 import MatchService from "@/services/match";
+import { selectAuthState } from "@/store/authSlice";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 export default function MatchPage({match, score, scores}: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
     const [games, setGames] = useState(match.games || []);
     const [reactiveScores, setScores] = useState(scores);
 
+    const user = useSelector(selectAuthState);
+    
     async function onCreateGame({winner, map}: {winner: TeamData, map: {name: string}}) {
+        
         
         const game = await createGame(match.id, winner.id, map.name);
         setGames([...games, game])
@@ -20,40 +25,42 @@ export default function MatchPage({match, score, scores}: InferGetServerSideProp
     }
 
     return <div className="mt-10 mx-2">
-        <div>
-            <FormTemplate 
-                onSubmit={onCreateGame}
-                title="Register Game"
-                fields={[
-                {
-                    type: FieldType.DROPDOWN,
-                    placeholder: "Winner",
-                    name: "winner",
-                    label: "Winner",
-                    source: async () => {
-                        return [match.teamA, match.teamB];
-                    },
-                    title: (t: ITeam) => t.name
+        <div>{
+            user?.role === 20 && <FormTemplate 
+            onSubmit={onCreateGame}
+            title="Register Game"
+            fields={[
+            {
+                type: FieldType.DROPDOWN,
+                placeholder: "Winner",
+                name: "winner",
+                label: "Winner",
+                source: async () => {
+                    return [match.teamA, match.teamB];
                 },
-                {
-                    type: FieldType.AUTOCOMPLETE,
-                    placeholder: "Map",
-                    name: "map",
-                    label: "Map",
-                    source: async (prompt) => {
-                        return [
-                            {name: "Anubis"},
-                            {name: "Inferno"},
-                            {name: "Mirage"},
-                            {name: "Nuke"},
-                            {name: "Overpass"},
-                            {name: "Vertigo"},
-                            {name: "Ancient"},
-                        ].filter(x => x.name.toLowerCase().includes(prompt.toLowerCase()))
-                    },
-                    title: (t: any) => t.name
-                }
+                title: (t: ITeam) => t.name
+            },
+            {
+                type: FieldType.AUTOCOMPLETE,
+                placeholder: "Map",
+                name: "map",
+                label: "Map",
+                source: async (prompt) => {
+                    return [
+                        {name: "Anubis"},
+                        {name: "Inferno"},
+                        {name: "Mirage"},
+                        {name: "Nuke"},
+                        {name: "Overpass"},
+                        {name: "Vertigo"},
+                        {name: "Ancient"},
+                    ].filter(x => x.name.toLowerCase().includes(prompt.toLowerCase()))
+                },
+                title: (t: any) => t.name
+            }
             ]} />
+        }
+            
         </div>
         <div className="mt-2 text-xl text-center font-bold">
             <h1>

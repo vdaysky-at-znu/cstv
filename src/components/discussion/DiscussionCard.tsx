@@ -45,7 +45,7 @@ export default function DiscussionView({discussion}: {discussion:  DiscussionDat
         <li className={
             " box-border "  + (discussion.title ? "" : " before:border-b before:border-l ") + 
             " before:box-border before:absolute before:w-[23px] before:left-[-15px] before:rounded-bl-md " + 
-            " before:h-full before:last:h-[50px] before:top-[-13px] before:border-gray-400 " +
+            " before:h-full before:last:h-[50px] before:top-[-13px] lg:before:top-[-5px] before:border-gray-400 " +
             " relative pl-2"
         }>
             <div className="mt-2">
